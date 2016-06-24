@@ -1,0 +1,63 @@
+<!-- $Id: category_list.htm 17019 2010-01-29 10:10:34Z liuhui $ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>ECSHOP 管理中心 - 商品分类 </title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="__CSS__/general.css" rel="stylesheet" type="text/css" />
+    <link href="__CSS__/main.css" rel="stylesheet" type="text/css" />
+    <css href='__CSS__/page.css'/>
+</head>
+<body>
+<h1>
+    <span class="action-span"><a href="{:U('add')}">添加供货商</a></span>
+    <span class="action-span1"><a href="__GROUP__">ECSHOP 管理中心</a></span>
+    <span id="search_id" class="action-span1"> - 供货商列表 </span>
+    <div style="clear:both"></div>
+</h1>
+<div style="clear:both"></div>
+<div class="form-div">
+    <form action="" name="searchForm">
+        <img src="__IMG__/icon_search.gif" width="26" height="22" border="0" alt="search" />
+        <input type="text" name="name" size="15" value="{:I('get.name')}"/>
+        <input type="submit" value=" 搜索 " class="button" />
+    </form>
+</div>
+<form method="post" action="" name="listForm">
+    <div class="list-div" id="listDiv">
+        <table width="100%" cellspacing="1" cellpadding="2" id="list-table">
+            <tr>
+                <th>供应商名称</th>
+                <th>供应商简介</th>
+                <th>是否显示</th>
+                <th>排序</th>
+                <th>操作</th>
+            </tr>
+            <foreach name="rows" item="val">
+                <tr align="center" class="0">
+                    <td align="left" class="first-cell" >{$val.name}</td>
+                    <td width="15%" align="center"><span>{$val.intro}</span></td>
+                    <td width="15%" align="center"><if condition="($val.status eq 1)"><img src="__IMG__/yes.gif" alt=""/><else /><img src="__IMG__/no.gif" alt=""/></if></td>
+                    <td width="15%" align="center"><span>{$val.sort}</span></td>
+                    <td width="30%" align="center">
+                        <a href="{:U('edit?id='.$val['id'])}">编辑</a> |
+                        <a href="{:U('remove?id='.$val['id'])}" title="移除" onclick="">移除</a>
+                    </td>
+                </tr>
+            </foreach>
+            <tr>
+                <td align="right" nowrap="true" colspan="6">
+                    <div id="turn-page" class='page'>
+                        {$page_html}
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>
+<div id="footer">
+    共执行 1 个查询，用时 0.055904 秒，Gzip 已禁用，内存占用 2.202 MB<br />
+    版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。</div>
+</body>
+</html>
