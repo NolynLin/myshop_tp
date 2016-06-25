@@ -10,9 +10,9 @@
 </head>
 <body>
 <h1>
-    <span class="action-span"><a href="{:U('add')}">添加分类</a></span>
+    <span class="action-span"><a href="{:U('add')}">添加品牌</a></span>
     <span class="action-span1"><a href="#">ECSHOP 管理中心</a></span>
-    <span id="search_id" class="action-span1"> - 文章分类 </span>
+    <span id="search_id" class="action-span1"> - 品牌分类 </span>
     <div style="clear:both"></div>
 </h1>
 <div class="form-div">
@@ -30,7 +30,7 @@
                 <th>分类描述</th>
                 <th>排序</th>
                 <th>当前状态</th>
-                <th>是否属于帮助文档</th>
+                <th>品牌网站</th>
                 <th>操作</th>
             </tr>
             <foreach name="rows" item="row">
@@ -39,7 +39,7 @@
                 <td align="center">{$row.intro}</td>
                 <td align="center">{$row.sort}</td>
                 <td align="center"><if condition="($row.status eq 1)"><img src="__IMG__/yes.gif" /><else /><img src="__IMG__/no.gif" alt=""/></if></td>
-                <td align="center"><if condition="($row.is_help eq 1)"><img src="__IMG__/yes.gif" /><else /><img src="__IMG__/no.gif" alt=""/></if></td>
+                <td align="center">{$row.url}</td>
                 <td align="center">
                 <a href="{:U('edit',['id'=>$row['id']])}" title="编辑">编辑</a> |
                 <a href="{:U('remove',['id'=>$row['id']])}" title="编辑">移除</a>

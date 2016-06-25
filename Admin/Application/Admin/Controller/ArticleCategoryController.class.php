@@ -80,6 +80,15 @@ class ArticleCategoryController extends Controller
      */
     public function remove($id)
     {
-
+        $data=[
+            'id'=>$id,
+            'status'=>-1,
+            'name'=>['exp','concat(name,"_del")']
+        ];
+        if($this->_model->setField($data)===false){
+            $this->error(getError($this->_model));
+        }else{
+            $this->success('移除成功',U('index'));
+        }
     }
 }
