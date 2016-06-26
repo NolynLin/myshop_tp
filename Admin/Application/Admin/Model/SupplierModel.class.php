@@ -47,5 +47,6 @@ class SupplierModel extends Model
 //        dump($rows);
 //        dump($page_html);exit;
         return compact(['rows','page_html']);
+
     }
 }
