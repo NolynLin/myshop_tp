@@ -2,6 +2,7 @@
 <block name="title">
     <title>ECSHOP 管理中心 - 添加品牌 </title>
     <css href='__CSS__/page.css'/>
+    <css href='__UPLOADIFY__/common.css'/>
 </block>
 <block name="main">
 <h1>
@@ -21,6 +22,21 @@
                 </td>
             </tr>
             <tr>
+                <td class="label">品牌网站</td>
+                <td>
+                    <input type="text" name="url" maxlength="60" size="15" value="{$url}" />
+                </td>
+            </tr>
+            <tr>
+                <td class="label">品牌LOGO</td>
+                <td>
+                    <input type="hidden" name="logo" value="{$logo}" id="logo_url"/>
+                    <input type="file"  id="logo" size="45" disabled="false"><br/>
+                    <span class="notice-span" style="display:block"  id="warn_brandlogo" >请上传图片，做为品牌的LOGO！</span>
+                    <img src="{$logo}" id="load_logo" width="100">
+                </td>
+            </tr>
+            <tr>
                 <td class="label">品牌描述</td>
                 <td>
                     <textarea  name="intro" cols="60" rows="4"  >{$intro}</textarea>
@@ -30,12 +46,6 @@
                 <td class="label">排序</td>
                 <td>
                     <input type="text" name="sort" maxlength="40" size="15" value="{$sort}" />
-                </td>
-            </tr>
-            <tr>
-                <td class="label">品牌网站</td>
-                <td>
-                    <input type="text" name="url" maxlength="40" size="15" value="{$url}" />
                 </td>
             </tr>
             <tr>
@@ -56,10 +66,35 @@
     </form>
 </div>
 <!--回显编辑时当前品牌是否显示-->
-<js href='__JS__/jquery.min.js'/>
+    <js href='__JS__/jquery-1.11.2.js'/>
+    <js href='__UPLOADIFY__/jquery.uploadify.min.js' />
+    <js href='__LAYER__/layer.js' />
 <script type="text/javascript">
     $(function(){
         $('.status').val([{$status|default=1}]);
+        //如果logo变量有值，那么就不显示提示上传的文字
+        <present name="logo">
+            $('#warn_brandlogo').text('');
+        </present>
+        $('#logo').uploadify({
+            'buttonText':'选择文件',
+            'fileObjName':'file_data',
+            'swf'  :  '__UPLOADIFY__/uploadify.swf',
+            'uploader'  :  '{:U("Upload/upload")}',
+            onUploadSuccess:function(file_node,response){
+                var data= $.parseJSON(response);
+//                判断上传的状态
+                if(data.status){
+//                    如果成功则显示出图片，并且将span的文字隐藏
+                    $('#load_logo').attr('src',data.file_url);
+                    $('#warn_brandlogo').text('');
+                    $('#logo_url').val(data.file_url);
+                    layer.alert(data.msg,{icon:6});
+                }else {
+                    layer.alert(data.msg,{icon:5});
+                }
+            }
+        })
     })
 </script>
 <div id="footer">

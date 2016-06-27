@@ -1,13 +1,13 @@
 <extend name="Layout:common"/>
 <block name="title">
-    <title>ECSHOP 管理中心 - 商品品牌 </title>
+    <title>ECSHOP 管理中心 - 商品分类 </title>
     <css href='__CSS__/page.css'/>
 </block>
 <block name="main">
 <h1>
-    <span class="action-span"><a href="{:U('add')}">添加分类</a></span>
+    <span class="action-span"><a href="{:U('add')}">添加商品分类</a></span>
     <span class="action-span1"><a href="#">ECSHOP 管理中心</a></span>
-    <span id="search_id" class="action-span1"> - 文章分类 </span>
+    <span id="search_id" class="action-span1"> - 商品分类 </span>
     <div style="clear:both"></div>
 </h1>
 <div class="form-div">
@@ -41,13 +41,6 @@
                 </td>
             </tr>
             </foreach>
-            <tr>
-                <td align="right" nowrap="true" colspan="6">
-                    <div id="turn-page" class='page'>
-                        {$page_html}
-                    </div>
-                </td>
-            </tr>
         </table>
     </div>
 </form>

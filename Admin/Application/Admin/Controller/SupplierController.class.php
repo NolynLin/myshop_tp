@@ -27,7 +27,7 @@ class SupplierController extends Controller
         //查询状态大于等于0的数据
         $cond['status']=['egt',0];
 //        如果是模糊查询的话,添加一条查询规则
-        if($name){
+        if(!empty($name)){
             $cond['name']=['like','%'.$name.'%'];
         }
         //写数据查询

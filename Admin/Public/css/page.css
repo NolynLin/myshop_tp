@@ -1,6 +1,7 @@
 .page {
     margin: 10px 0;
     *zoom: 1;
+    float: right;
 }
 .page:before,
 .page:after {

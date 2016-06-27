@@ -100,4 +100,8 @@ class BrandController extends Controller
             $this->success('移除成功',U('index'));
         }
     }
+    public function upload()
+    {
+        $this->display();
+    }
 }

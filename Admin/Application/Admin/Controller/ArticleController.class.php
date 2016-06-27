@@ -29,7 +29,6 @@ class ArticleController extends Controller
         //将状态为-1的数据不展示
         $cond['`article`.status']=['egt',0];
         $rows=$this->_model->getArtPage($cond);
-
         $this->assign($rows);
         $this->display();
     }
@@ -51,8 +50,11 @@ class ArticleController extends Controller
             /**
              * 显示出可选择的文章分类
              */
-            $artCatModel=D('ArticleCategory');
-            $rows=$artCatModel->select();
+//            $artCatModel=D('ArticleCategory');
+//            $rows=$artCatModel->select();
+            $artCatModel = D('ArticleCategory');
+            $rows             = $artCatModel->getList();
+//            dump($rows);exit;
             $this->assign('rows',$rows);
             $this->display();
         }
@@ -64,7 +66,7 @@ class ArticleController extends Controller
             if($this->_model->create()===false){
                 $this->error(getError($this->_model));
             }
-            if($this->_model->save()===false){
+            if($this->_model->saveAriCon(I('post.'))===false){
                 $this->error('修改失败');
             }else{
                 $this->success('修改成功',U('index'));
@@ -74,8 +76,8 @@ class ArticleController extends Controller
             $row=$this->_model->find($id);
             $this->assign($row);
             //2.显示文章分类列表
-            $artCatModel=M('ArticleCategory');
-            $rows=$artCatModel->select();
+            $artCatModel = D('ArticleCategory');
+            $rows             = $artCatModel->getList();
             $this->assign('rows',$rows);
             //3.显示文章具体内容
             $artContent=M('ArticleContent');

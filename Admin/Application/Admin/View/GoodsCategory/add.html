@@ -1,0 +1,102 @@
+<extend name="Layout:common"/>
+<block name="title">
+    <title>ECSHOP 管理中心 - 添加商品分类 </title>
+    <link rel="stylesheet" href="__ZTREE__/css/zTreeStyle/zTreeStyle.css" type="text/css"/>
+    <style type="text/css">
+        ul.ztree{
+            margin-top: 10px;
+            border: 1px solid #617775;
+            background: #f0f6e4;
+            width: 220px;
+            overflow-y: scroll;
+            overflow-x: auto;
+        }
+    </style>
+</block>
+<block name="main">
+<h1>
+    <span class="action-span"><a href="{:U('index')}">商品分类列表</a></span>
+    <span class="action-span1"><a href="#">ECSHOP 管理中心</a></span>
+    <span id="search_id" class="action-span1"> - 添加商品分类 </span>
+    <div style="clear:both"></div>
+</h1>
+<div class="main-div">
+    <form method="post" action="{:U()}"enctype="multipart/form-data" >
+        <table cellspacing="1" cellpadding="3" width="100%">
+            <tr>
+                <td class="label">商品分类名称</td>
+                <td>
+                    <input type="text" name="name" maxlength="60" value="{$name}" />
+                    <span class="require-field">*</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">父级分类</td>
+                <td>
+                    <input type="hidden" name="parent_id" id='parent_id'/>
+                    <input type='text' disabled='disabled' id='parent_name' style="padding-left:1em;"/>
+                    <ul id="goods_categories" class="ztree"></ul>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">分类描述</td>
+                <td>
+                    <textarea  name="intro" cols="60" rows="4"  >{$intro}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">是否显示</td>
+                <td>
+                    <input type="radio" name="status" value="1" class="status" /> 是
+                    <input type="radio" name="status" value="0"  class="status"/> 否
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><br />
+                    <input type="submit" class="button" value=" 确定 " />
+                    <input type="hidden" class="button" name="id" value=" {$id} " />
+                    <input type="reset" class="button" value=" 重置 " />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<!--回显编辑时当前品牌是否显示-->
+<js href='__JS__/jquery.min.js'/>
+<script type="text/javascript" src="__ZTREE__/js/jquery.ztree.core.js"></script>
+<script type="text/javascript">
+    var setting = {
+        data: {
+            simpleData: {
+                enable: true,
+                pIdKey:'parent_id',
+            },
+
+        },
+        callback:{
+            onClick: function (event,treeId,treeNode) {
+                $('#parent_id').val(treeNode.id);
+                $('#parent_name').val(treeNode.name);
+            }
+        }
+
+    };
+    var goods_categories={$rows};
+    $(function(){
+        $('.status').val([{$status|default=1}]);
+        var goods_category_ztree=$.fn.zTree.init($("#goods_categories"), setting,goods_categories);
+        goods_category_ztree.expandAll(true);
+        <present name="name">
+            var parent_node=goods_category_ztree.getNodeByParam('id',{$parent_id})
+            if(parent_node){
+            $('#parent_name').val(parent_node.name);
+        }else{
+            $('#parent_name').val('顶级分类');
+        }
+        </present>
+    });
+</script>
+<div id="footer">
+共执行 1 个查询，用时 0.018952 秒，Gzip 已禁用，内存占用 2.197 MB<br />
+版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。</div>
+</block>

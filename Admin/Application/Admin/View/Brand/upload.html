@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+   <js href="__JS__/jquery-1.11.2.js"></js>
+   <js href="__UPLOADIFY__/jquery.uploadify.min.js"></js>
+   <js href="__CSS__/uploadify.css"></js>
+</head>
+<body>
+<input type="file" id="logos"/>
+<input type="hidden" name="logo"/>
+<script>
+    $(function () {
+        $('#logo').uploadify({
+            'buttonText':'选择文件',
+            'fileObjName':'file',
+            'swf'  :  '__CSS__/uploadify.swf',
+            'uploader'  :  '{:U("Upload/upload")}',
+            'onUploadSuccess':function(file_node,data){
+                data= $.parseJSON(data);
+                if(data.status){
+                    $(':input[name=logo]').val(data.file_url);
+                    console.log(data.file_url);
+                }else {
+                    console.log(data.msg);
+                }
+                console.log(data);
+            }
+        })
+    })
+</script>
+</body>
+</html>

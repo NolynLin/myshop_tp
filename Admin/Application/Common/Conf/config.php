@@ -1,11 +1,12 @@
 <?php
+define('PZ_PATH','http://admin.shop.com');
 return array(
-    'URL_MODEL'            =>2, /*设置// URL访问模式,可选参数0、1、2、3,代表以下四种模式：
+    'URL_MODEL'            =>1, /*设置// URL访问模式,可选参数0、1、2、3,代表以下四种模式：
     // 0 (普通模式); 1 (PATHINFO 模式); 2 (REWRITE  模式); 3 (兼容模式)  默认为PATHINFO 模式*/
     //分页相关的配置
     'PAGE_SETTING'=>[
-        'PAGE_SIZE'=>20,
-        //分页样式
+        'PAGE_SIZE'=>2,
+        //分页样式,加一个%HEADER%，显示总数据条数
         'PAGE_THEME'=>'%HEADER% %FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END%',
     ],
     /* 数据库设置 */
@@ -24,4 +25,16 @@ return array(
     'DB_RW_SEPARATE'        =>  false,       // 数据库读写是否分离 主从式有效
     'DB_MASTER_NUM'         =>  1, // 读写分离后 主服务器数量
     'DB_SLAVE_NO'           =>  '', // 指定从服务器序号
+    /* 定义public文件路径*/
+    //'配置项'=>'配置值'
+    'TMPL_PARSE_STRING'=>array(
+        '__CSS__'=>PZ_PATH.'/Public/css',
+        '__JS__'=>PZ_PATH.'/Public/js',
+        '__IMG__'=>PZ_PATH.'/Public/images',
+        '__UPLOADIFY__'=>PZ_PATH.'/Public/ext/uploadify',
+        '__LAYER__'=>PZ_PATH.'/Public/ext/layer',
+        '__ZTREE__'=>PZ_PATH.'/Public/ext/ztree',
+    ),
+    'DEFAULT_CONTROLLER'    =>  'Supplier', // 默认控制器名称
+    'UPLOAD_SETTING' =>require 'upload.php',
 );

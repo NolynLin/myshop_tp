@@ -30,14 +30,14 @@
             </tr>
             <foreach name="rows" item="row">
             <tr>
-                <td class="first-cell">{$row.aname}</td>
                 <td class="first-cell">{$row.name}</td>
-                <td align="center">{$row.aintro}</td>
-                <td align="center">{$row.asort}</td>
-                <td align="center"><if condition="($row.astatus eq 1)"><img src="__IMG__/yes.gif" /><else /><img src="__IMG__/no.gif" alt=""/></if></td>
+                <td class="first-cell">{$row.acname}</td>
+                <td align="center">{$row.intro}</td>
+                <td align="center">{$row.sort}</td>
+                <td align="center"><if condition="($row.status eq 1)"><img src="__IMG__/yes.gif" /><else /><img src="__IMG__/no.gif" alt=""/></if></td>
                 <td align="center">
-                <a href="{:U('edit',['id'=>$row['aid']])}" title="编辑">编辑</a> |
-                <a href="{:U('remove',['id'=>$row['aid']])}" title="编辑">移除</a>
+                <a href="{:U('edit',['id'=>$row['id']])}" title="编辑">编辑</a> |
+                <a href="{:U('remove',['id'=>$row['id']])}" title="编辑">移除</a>
                 </td>
             </tr>
             </foreach>

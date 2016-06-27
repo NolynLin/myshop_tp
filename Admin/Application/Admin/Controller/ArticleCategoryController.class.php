@@ -28,11 +28,11 @@ class ArticleCategoryController extends Controller
     {
         //获取搜索时候传入的值
         $name=I('get.name');
-        //如果值为空，只做列表显示
+        //如果值不为空，做模糊搜索
         if(!empty($name)){
             $cond['name']=['like','%'.$name.'%'];
         }
-        //显示条件是状态>=0
+        //显示条件是状态status>=0
         $cond['status']=['egt',0];
         //将数据传给MODEL方法
         $rows=$this->_model->getArtCatPage($cond);

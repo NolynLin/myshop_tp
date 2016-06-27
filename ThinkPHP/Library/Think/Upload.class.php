@@ -193,6 +193,7 @@ class Upload {
                 $file['savepath'] = $this->savePath . $subpath;
             }
 
+
             /* 对图像文件进行严格检测 */
             $ext = strtolower($file['ext']);
             if(in_array($ext, array('gif','jpg','jpeg','bmp','png','swf'))) {

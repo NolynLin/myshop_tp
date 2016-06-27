@@ -39,11 +39,16 @@ class ArticleCategoryModel extends Model
         $page_setting=C('PAGE_SETTING');
         $count=$this->where($cond)->count();
         $page=new Page($count,$page_setting['PAGE_SIZE']);
-        //添加分页样式,必须要写！！！！
+        //自定义分页样式，显示出总数据条数
         $page->setConfig('theme',$page_setting['PAGE_THEME']);
         $page_html=$page->show();
         $rows=$this->where($cond)->page(I('get.p',1),$page_setting['PAGE_SIZE'])->select();
         return compact('rows','page_html');
-
+//        dump(compact('rows','page_html'));
+//        dump(compact(['rows','page_html']));exit;
+    }
+    public function getList()
+    {
+        return $this->where(['status'=>['egt',0]])->getField('id,name');
     }
 }

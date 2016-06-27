@@ -22,9 +22,10 @@
             <tr>
                 <td class="label">文章所属分类</td>
                 <td>
-                    <select name="article_category_id">
-                        <volist name="rows" id="row">
-                        <option value="{$row.id}" <if condition="($row.id eq $article_category_id)">selected="selected" </if>>{$row.name}</option>
+                    <select name="article_category_id" class="article_category_id">
+                        <option value="">请选择</option>
+                        <volist name="rows" id="roww">
+                        <option value="{$key}">{$roww}</option>
                         </volist>
                     </select>
                 </td>
@@ -69,7 +70,7 @@
 <script type="text/javascript">
     $(function(){
         $('.status').val([{$status|default=1}]);
-        $('.is_help').val([{$is_help|default=1}])
+        $('.article_category_id').val([{$row['id']}])
     })
 </script>
 <div id="footer">

@@ -19,6 +19,7 @@ class ArticleModel extends Model
     protected $_validate = [
         //验证品牌名
         ['name','require','文章名称不能为空'],
+        ['article_category_id','require','文章分类不能为空'],
         ['name','','文章名称已存在',self::EXISTS_VALIDATE ,'unique','register'],
         //验证排序
         ['sort','require','文章排序不能为空'],
@@ -71,13 +72,8 @@ class ArticleModel extends Model
         $page->setConfig('theme',$page_setting['PAGE_THEME']);
         $page_html=$page->show();
         //获取满足条件的数据
-//        $row=$this->query('SELECT *,ac.name as aname FROM article AS ar JOIN article_category AS ac ON ar.`article_category_id`=ac.`id` WHERE ar.`status`>=0);sql语句
         //通过拼接的方式，从文章标题表查询出标题信息，再将对应的标题所属的文章分类的name查询出来，这里用到了连接查询，并且字段是article表中的所有字段，article_category表只需要name，那么直接用select，会根据主键去查找，有两个主键，会冲突，这里是先用select(false)获取到sql语句，再执行,这里用了联合查询，数据会被覆盖，所以只能按别名写
-        $sql=$this->where($cond)->join('article_category AS ac ON `article`.`article_category_id`=ac.`id`')->page(I('get.p',1),$page_setting['PAGE_SIZE'])->field('`article`.`intro` as aintro,`article`.status as astatus ,`article`.name as aname,`article`.`id` as aid,`article`.`sort` as asort,ac.name')->select(false);
-//        dump($row);
-        $rows=$this->query($sql);
-//        dump($rows);exit;
-//        $rows=$this->where($cond)->page(I('get.p',1),$page_setting['PAGE_SIZE'])->select();
+        $rows=$this->where($cond)->join('article_category AS ac ON `article`.`article_category_id`=ac.`id`')->page(I('get.p',1),$page_setting['PAGE_SIZE'])->field('`article`.*,ac.name as acname')->select();
         return compact('rows','page_html');
     }
     /**
@@ -102,4 +98,28 @@ class ArticleModel extends Model
         $this->commit();
         return true;
     }
+    /**
+     * 修改文章内容和文章标题
+     */
+    public function saveAriCon($data)
+    {
+        //开启事务，首先保存文章标题信息，
+        $this->startTrans();
+        $arId=$data['id'];
+        $content['content']=$data['content'];
+        if($this->save()===false){
+            $this->rollback();
+            return false;
+        }
+        //文章标题保存成功，再修改文章内容
+        $conModel=D('ArticleContent');
+        if($conModel->where(['article_id'=>$arId])->save($content)===false){
+            $this->rollback();
+            return false;
+        }
+        $this->commit();
+        return true;
+    }
+
+
 }
