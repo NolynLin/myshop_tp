@@ -29,16 +29,14 @@ class BrandController extends Controller
         //获取搜索的关键字
         $name=I('get.name');
         //拼接查询条件，传给model
+        $cond=[];
         if(!empty($name)){
             $cond['name']=['like','%'.$name.'%'];
         }
-        //状态大于0的数据
-        $cond['status']=['egt',0];
         $rows=$this->_model->getRandData($cond);
         $this->assign($rows);
         $this->display();
     }
-
     /**
      * 根据id去修改品牌
      * @param $id
@@ -99,9 +97,5 @@ class BrandController extends Controller
         }else{
             $this->success('移除成功',U('index'));
         }
-    }
-    public function upload()
-    {
-        $this->display();
     }
 }

@@ -2,6 +2,7 @@
 <block name="title">
     <title>ECSHOP 管理中心 - 商品分类 </title>
     <css href='__CSS__/page.css'/>
+    <css href="__TREEGRID__/css/jquery.treegrid.css"/>
 </block>
 <block name="main">
 <h1>
@@ -19,7 +20,7 @@
 </div>
 <form method="post" action="" name="listForm">
     <div class="list-div" id="listDiv">
-        <table cellpadding="3" cellspacing="1">
+        <table cellpadding="3" cellspacing="1" class="tree">
             <tr>
                 <th>商品分类名称</th>
                 <th>左节点</th>
@@ -30,9 +31,9 @@
                 <th>操作</th>
             </tr>
             <foreach name="rows" item="row">
-            <tr>
-                <td class="first-cell">{:str_repeat('&nbsp;',$row['level']*5).$row['name']}</td>
-                <td class="first-cell">{$row.lft}</td>
+            <tr class="treegrid-{$row.id} <neq name='row.parent_id' value='0'>treegrid-parent-{$row.parent_id}</neq>">
+                <td class="first-cell">{$row['name']}</td>
+                <td class="center">{$row.lft}</td>
                 <td align="center">{$row.rght}</td>
                 <td align="center">{$row.parent_id}</td>
                 <td align="center">{$row.intro}</td>
@@ -53,7 +54,14 @@
         </table>
     </div>
 </form>
+    <js href='__JS__/jquery.min.js'/>
+    <js href='__TREEGRID__/js/jquery.treegrid.js'/>
+    <script type="text/javascript">
+        $(function(){
+            $('.tree').treegrid();
+        })
 
+    </script>
 <div id="footer">
 共执行 3 个查询，用时 0.021251 秒，Gzip 已禁用，内存占用 2.194 MB<br />
 版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。</div>

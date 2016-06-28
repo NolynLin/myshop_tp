@@ -87,12 +87,15 @@
         var goods_category_ztree=$.fn.zTree.init($("#goods_categories"), setting,goods_categories);
         goods_category_ztree.expandAll(true);
         <present name="name">
+            <!--根据父级id找到父级节点,回显数据-->
             var parent_node=goods_category_ztree.getNodeByParam('id',{$parent_id})
-            if(parent_node){
+            <!--判断父级节点是否存在-->
+
+//                存在则选中节点
+            goods_category_ztree.selectNode(parent_node);
+//                并且将值和id绑定到input标签，防止直接提交而丢失数据
             $('#parent_name').val(parent_node.name);
-        }else{
-            $('#parent_name').val('顶级分类');
-        }
+            $('#parent_id').val(parent_node.id);
         </present>
     });
 </script>

@@ -23,11 +23,15 @@ class ArticleController extends Controller
     {
         //获取搜索的关键字model层需要做具体查询，这里用`article`.这样的方式
         $name=I('get.name');
+        $cond=[];
         if(!empty($name)){
-            $cond['`article`.name']=['like','%'.$name.'%'];
+            $cond['name']=['like','%'.$name.'%'];
         }
-        //将状态为-1的数据不展示
-        $cond['`article`.status']=['egt',0];
+        //绑定文章分类的
+        $artCatModel = D('ArticleCategory');
+        $artCats             = $artCatModel->getList();
+        $this->assign('artCats',$artCats);
+        //查询数据,分页,搜索
         $rows=$this->_model->getArtPage($cond);
         $this->assign($rows);
         $this->display();
@@ -48,13 +52,10 @@ class ArticleController extends Controller
             }
         }else{
             /**
-             * 显示出可选择的文章分类
+             * 显示出可选择的文章分类,这里要将状态大于=0的显示出来,所以就在文章分类的一个方法里写了一个获取能显示的方法.
              */
-//            $artCatModel=D('ArticleCategory');
-//            $rows=$artCatModel->select();
             $artCatModel = D('ArticleCategory');
             $rows             = $artCatModel->getList();
-//            dump($rows);exit;
             $this->assign('rows',$rows);
             $this->display();
         }

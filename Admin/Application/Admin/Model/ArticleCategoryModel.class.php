@@ -44,8 +44,6 @@ class ArticleCategoryModel extends Model
         $page_html=$page->show();
         $rows=$this->where($cond)->page(I('get.p',1),$page_setting['PAGE_SIZE'])->select();
         return compact('rows','page_html');
-//        dump(compact('rows','page_html'));
-//        dump(compact(['rows','page_html']));exit;
     }
     public function getList()
     {

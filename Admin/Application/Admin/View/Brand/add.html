@@ -33,7 +33,7 @@
                     <input type="hidden" name="logo" value="{$logo}" id="logo_url"/>
                     <input type="file"  id="logo" size="45" disabled="false"><br/>
                     <span class="notice-span" style="display:block"  id="warn_brandlogo" >请上传图片，做为品牌的LOGO！</span>
-                    <img src="{$logo}" id="load_logo" width="100">
+                    <img src="{$logo}" id="load_logo" width="100" style="display: none">
                 </td>
             </tr>
             <tr>
@@ -74,6 +74,7 @@
         $('.status').val([{$status|default=1}]);
         //如果logo变量有值，那么就不显示提示上传的文字
         <present name="logo">
+
             $('#warn_brandlogo').text('');
         </present>
         $('#logo').uploadify({
@@ -81,12 +82,13 @@
             'fileObjName':'file_data',
             'swf'  :  '__UPLOADIFY__/uploadify.swf',
             'uploader'  :  '{:U("Upload/upload")}',
+//            上传成功后的回调函数
             onUploadSuccess:function(file_node,response){
                 var data= $.parseJSON(response);
 //                判断上传的状态
                 if(data.status){
 //                    如果成功则显示出图片，并且将span的文字隐藏
-                    $('#load_logo').attr('src',data.file_url);
+                    $('#load_logo').css('display','block').attr('src',data.file_url);
                     $('#warn_brandlogo').text('');
                     $('#logo_url').val(data.file_url);
                     layer.alert(data.msg,{icon:6});

@@ -31,7 +31,7 @@
             <foreach name="rows" item="row">
             <tr>
                 <td class="first-cell">{$row.name}</td>
-                <td class="first-cell">{$row.acname}</td>
+                <td class="first-cell">{$artCats[$row['article_category_id']]}</td>
                 <td align="center">{$row.intro}</td>
                 <td align="center">{$row.sort}</td>
                 <td align="center"><if condition="($row.status eq 1)"><img src="__IMG__/yes.gif" /><else /><img src="__IMG__/no.gif" alt=""/></if></td>

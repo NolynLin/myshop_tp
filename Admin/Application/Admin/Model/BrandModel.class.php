@@ -30,6 +30,8 @@ class BrandModel extends Model
      * @param array $cond
      */
     public function getRandData(array $cond=[]){
+        //状态大于0的数据
+        $cond=array_merge(['status'=>['egt',0]],$cond);
         //获取分页配置
         $page_setting=C('PAGE_SETTING');
         //获取总条数

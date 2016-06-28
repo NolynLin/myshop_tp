@@ -47,7 +47,7 @@ class ArticleCategoryController extends Controller
                 $this->error(getError($this->_model));
             }
             if($this->_model->add()===false){
-                $this->error('添加失败');
+                $this->error(getError($this->_model));
             }else{
                 $this->success('添加成功',U('index'));
             }
@@ -63,7 +63,7 @@ class ArticleCategoryController extends Controller
                 $this->error(getError($this->_model));
             }
             if($this->_model->save()===false){
-                $this->error('修改失败');
+                $this->error(getError($this->_model));
             }else{
                 $this->success('修改成功',U('index'));
             }

@@ -34,6 +34,7 @@ return array(
         '__UPLOADIFY__'=>PZ_PATH.'/Public/ext/uploadify',
         '__LAYER__'=>PZ_PATH.'/Public/ext/layer',
         '__ZTREE__'=>PZ_PATH.'/Public/ext/ztree',
+        '__TREEGRID__'=>PZ_PATH.'/Public/ext/treegrid',
     ),
     'DEFAULT_CONTROLLER'    =>  'Supplier', // 默认控制器名称
     'UPLOAD_SETTING' =>require 'upload.php',

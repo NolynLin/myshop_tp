@@ -63,7 +63,20 @@ class ArticleModel extends Model
      * 获取分页和搜索数据
      * @param array $cond
      */
-    public function getArtPage(array $cond)
+    public function getArtPage(array $cond=[])
+    {
+        $cond=array_merge(['status'=>['egt',0]],$cond);
+        //获取分页配置
+        $page_setting=C('PAGE_SETTING');
+        $count=$this->where($cond)->count();
+        $page=new Page($count,$page_setting['PAGE_SIZE']);
+        $page->setConfig('theme',$page_setting['PAGE_THEME']);
+        $page_html=$page->show();
+        //获取满足条件的数据
+        $rows=$this->where($cond)->page(I('get.p',1),$page_setting['PAGE_SIZE'])->select();
+        return compact('rows','page_html');
+    }
+    public function getArtPage2(array $cond)
     {
         //获取分页配置
         $page_setting=C('PAGE_SETTING');

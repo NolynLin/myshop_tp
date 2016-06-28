@@ -38,55 +38,62 @@ class GoodsCategoryController extends Controller
             if($this->_model->create()===false){
                 $this->error(getError($this->_model));
             }
-            if($this->_model->add()===false){
-                $this->error('添加失败');
+            if($this->_model->addCategory()===false){
+                $this->error(getError($this->_model));
             }else{
                 $this->success('添加成功',U('index'));
             }
         }else{
-            $rows=json_encode($this->_model->getList());
-            $this->assign('rows',$rows);
+            $this->_before_view();
             $this->display();
         }
     }
 
+    /**
+     * 编辑商品分类,用nestedsets工具自动计算左右节点和层级
+     * @param $id
+     */
     public function edit($id)
     {
         if(IS_POST){
             if($this->_model->create()===false){
                 $this->error(getError($this->_model));
             }
-            if($this->_model->save()===false){
-                $this->error('修改失败');
+            if($this->_model->saveCategory()===false){
+                $this->error(getError($this->_model));
             }else{
                 $this->success('修改成功',U('index'));
             }
         }else{
             //回显
-            //获取所有分类
+
             $row=$this->_model->find($id);
-            $rows=json_encode($this->_model->getList());
-            $this->assign('rows',$rows);
-            dump($row);
             $this->assign($row);
+            //获取所有分类,并添加一个顶级分类
+            $this->_before_view();
             $this->display('add');
         }
     }
 
     /**
-     * 根据id去逻辑移除文章分类
+     * 根据id去物理删除商品分类,并自动使用nestedsets工具计算左右节点和层级
      */
     public function remove($id)
     {
-        $data=[
-            'id'=>$id,
-            'status'=>-1,
-            'name'=>['exp','concat(name,"_del")']
-        ];
-        if($this->_model->setField($data)===false){
+        if($this->_model->removeCategory($id)===false){
             $this->error(getError($this->_model));
         }else{
             $this->success('移除成功',U('index'));
         }
+    }
+    //将分类数据里面添加一个顶级分类的数组,
+    public function _before_view()
+    {
+        $rows=$this->_model->getList();
+        //将顶级分类添加进数组
+        array_unshift($rows,['id'=>0,'name'=>'顶级分类','parent_id'=>0]);
+        //将数组转成json对象传过去
+        $rows=json_encode($rows);
+        $this->assign('rows',$rows);
     }
 }
