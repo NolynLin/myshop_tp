@@ -47,4 +47,10 @@ class BrandModel extends Model
         //将数据拼接
         return compact('rows','page_html');
     }
+    //获取满足条件的品牌列表
+    public function getList()
+    {
+        return $this->where(['status'=>['gt',0]])->select();
+    }
+
 }

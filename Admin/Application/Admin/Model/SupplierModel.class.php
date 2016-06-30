@@ -49,4 +49,10 @@ class SupplierModel extends Model
         return compact(['rows','page_html']);
 
     }
+
+    //获取满足条件的供货商列表
+    public function getList()
+    {
+        return $this->where(['status'=>['gt',0]])->select();
+    }
 }

@@ -13,3 +13,25 @@ function getError(\Think\Model $model)
         $html.='</ul>';
         return $html;
 }
+
+/**
+ * @param array $data          一个二维数组
+ * @param  string $name_filed  要获取的option里面value的字段名
+ * @param string $value_filed  要获取的option里面值得字段名
+ * @param string $name         对应数据表要保存的字段名
+ * @return string html代码
+ */
+function getSelectHtml (array $data,$name_filed,$value_filed,$name='',$default_value='')
+{
+    $html='<select name="'.$name.'" class="'.$name.'">';
+    $html.='<option value="">请选择</option>';
+    foreach($data as $key=>$val){
+        if($val[$name_filed]==$default_value){
+            $html.='<option value="'.$val[$name_filed].'" selected="selected">'.$val[$value_filed].'</option>';
+        }else{
+    $html.='<option value="'.$val[$name_filed].'" >'.$val[$value_filed].'</option>';
+        }
+    }
+    $html.='</select>';
+    return $html;
+}

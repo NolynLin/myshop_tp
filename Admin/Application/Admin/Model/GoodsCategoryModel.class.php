@@ -24,6 +24,7 @@ class GoodsCategoryModel extends Model
         //验证排序
         ['parent_id','require','所属分类不能为空'],
     ];
+    //获取满足条件的商品分类列表
     public function getList()
     {
         return $this->where(['status'=>['egt',0]])->order('lft')->select();
@@ -35,7 +36,7 @@ class GoodsCategoryModel extends Model
      */
     public function addCategory()
     {
-//        getPk()删除主键
+//        获取主键名getPk(),这里如果不删除,会将id值传过去,这是不期望的,所以要先删除
         unset($this->data[$this->getPk()]);
 //        实例化nestedsets对象需要的数据库操作对象
         $mysql_db=D('DbMysql','Logic');
