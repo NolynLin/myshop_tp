@@ -1,0 +1,60 @@
+<extend name="Layout:common"/>
+<block name="title">
+<title>ECSHOP 管理中心 -权限列表 </title>
+<css href="__TREEGRID__/css/jquery.treegrid.css"/>
+    </block>
+<block name="main">
+<h1>
+    <span class="action-span"><a href="{:U('add')}">添加权限</a></span>
+    <span class="action-span1"><a href="__GROUP__">ECSHOP 管理中心</a></span>
+    <span id="search_id" class="action-span1"> - 权限列表 </span>
+</h1>
+<div style="clear:both"></div>
+<!-- 权限列表 -->
+<form method="post" action="" name="listForm" onsubmit="">
+    <div class="list-div" id="listDiv">
+        <table cellpadding="3" cellspacing="1" class="tree">
+            <tr>
+                <th>权限名称</th>
+                <th>URL地址</th>
+                <th>简介</th>
+                <th>状态</th>
+                <th>排序</th>
+                <th>操作</th>
+            </tr>
+            <foreach name="permissions" item="permission">
+            <tr class="treegrid-{$permission.id} <neq name='permission.parent_id' value='0'>treegrid-parent-{$permission.parent_id}</neq>">
+                <td class="first-cell">{$permission.name}</td>
+                <td align="center">{$permission.path}</td>
+                <td align="center">{$permission.intro}</td>
+                <td align="center">{$permission.status}</td>
+                <td align="center">{$permission.sort}</td>
+                <td align="center">
+                <a href="{:U('edit','id='.$permission['id'])}" title="编辑"><img src="__IMG__/icon_edit.gif" width="16" height="16" border="0" /></a>
+                <a href="{:U('remove','id='.$permission['id'])}" onclick="" title="回收站"><img src="__IMG__/icon_trash.gif" width="16" height="16" border="0" /></a></td>
+            </tr>
+            </foreach>
+            <tr>
+                <td align="right" nowrap="true" colspan="12">
+                    <div id="turn-page" class='page'>
+                        {$page_html}
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>
+
+<div id="footer">
+共执行 7 个查询，用时 0.028849 秒，Gzip 已禁用，内存占用 3.219 MB<br />
+版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。
+</div>
+    <js href='__JS__/jquery.min.js'/>
+    <js href='__TREEGRID__/js/jquery.treegrid.js'/>
+    <script type="text/javascript">
+        $(function(){
+            $('.tree').treegrid();
+        })
+
+    </script>
+</block>

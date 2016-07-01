@@ -26,7 +26,7 @@ function getSelectHtml (array $data,$name_filed,$value_filed,$name='',$default_v
     $html='<select name="'.$name.'" class="'.$name.'">';
     $html.='<option value="">请选择</option>';
     foreach($data as $key=>$val){
-        if($val[$name_filed]==$default_value){
+        if((string)$val[$name_filed]===$default_value){
             $html.='<option value="'.$val[$name_filed].'" selected="selected">'.$val[$value_filed].'</option>';
         }else{
     $html.='<option value="'.$val[$name_filed].'" >'.$val[$value_filed].'</option>';

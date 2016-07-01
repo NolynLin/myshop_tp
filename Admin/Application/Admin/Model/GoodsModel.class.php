@@ -31,18 +31,31 @@ class GoodsModel extends Model
         ['market_price', 'require', '市场售价不能为空'],
         ['market_price', 'currency', '市场售价格式不合法'],
         ['stock', 'require', '商品库存不能为空'],
-        //这个验证规则无法验证提交过来的值为null的情况吗???
+        //这个验证规则无法验证提交过来的值为null的情况吗???是的，所以要在自动完成的时候写个回调函数，验证是否为null
 //        ['goods_status', 'require', '商品推荐不能为空'],
     ];
     //自动完成
     protected $_auto = [
         //直接用self::MODEL_INSERT这个模式不行,要加register,为什么???
-        ['inputtime', NOW_TIME, 'register'],
-        ['sn', 'createSn', 'register', 'callback'],
+        ['inputtime', NOW_TIME, self::MODEL_INSERT],
+        ['sn', 'createSn', self::MODEL_INSERT, 'callback'],
         //由于传过来的加入推荐是个数组,所以要处理,这里的加入推荐在修改的时候也可能更改,所以完成时间是任何情况
-        ['goods_status', 'array_sum', self::MODEL_BOTH, 'function'],
+        ['goods_status', 'getGoodsStatus', self::MODEL_BOTH, 'callback'],
     ];
 
+    /**
+     * 当没选择商品是热销之类的时候，要处理一下
+     * @param $goods_status
+     * @return int|number
+     */
+    public function getGoodsStatus($goods_status)
+    {
+        if(isset($goods_status)){
+            return array_sum($goods_status);
+        }else{
+            return 0;
+        }
+    }
     /**
      * 计算商品货号
      * @param $sn callback传过来的数据
@@ -55,7 +68,7 @@ class GoodsModel extends Model
         if ($sn) {
             return $sn;
         }
-        //生成规则:SN年月日编号:SN2016062800001
+        //生成规则:SN年月日编号:SN2016062800001,即当天添加了多少个新商品,记录一个Num值,如果有值就加一,没有就从1开始计算
         //获取今天已经创建了多少商品
         $date = date('Ymd');
         $good_num_model = M('GoodsNum');
@@ -75,6 +88,7 @@ class GoodsModel extends Model
         if ($flags === false) {
             $this->rollback();
         }
+        //str_pad()使用另一个字符串填充字符串为指定长度
         $sn = 'SN' . $date . str_pad($num, 5, '0', STR_PAD_LEFT);
         return $sn;
     }
@@ -84,8 +98,7 @@ class GoodsModel extends Model
      */
     public function addGoods()
     {
-        //由于商品编辑时穿了个隐藏域的id,添加和编辑是同一个html页面,所以在添加的时候不需要这个id,要删除
-//        dump($this->data());exit;
+        //由于商品编辑时传了个隐藏域的id,添加和编辑是同一个html页面,所以在添加的时候不需要这个id,要删除
         unset($this->data['id']);
         //1.将商品基本数据添加到goods表
         if (($goods_id = $this->add()) === false) {

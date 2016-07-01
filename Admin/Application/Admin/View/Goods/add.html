@@ -143,7 +143,6 @@
 							</div>
                             </foreach>
 						</div>
-
 						<div>
 							<input type="file" id="load_goods_pic" />
 						</div>
@@ -173,7 +172,7 @@
     <script type="text/javascript">
         $(function () {
             /////////在编辑页面点击xx删除刚上传的图片////////////
-            /////////在编辑页面点击xx删除已存在的图片,通过ajax删除,用事件委派////////////
+            /////////在编辑页面点击xx删除已存在的图片,通过ajax删除,用on,事件委派////////////
             $('.upload-img-box').on('click','a',function () {
                 //如果图片是数据库已有的,通过ajax删除图片,并移除div
                 var id=$(this).attr('pic_id');//这个标记指代是否存在属性
@@ -214,6 +213,7 @@
                 onUploadSuccess: function (file_node,response) {
 //                    response是php处理图片上传后返回的数据,是由我们决定的有哪些数据
                     var data= $.parseJSON(response);
+                    console.log(data);
                     if(data.status){
 //                        上传成功
                         layer.alert(data.msg,{icon:6});

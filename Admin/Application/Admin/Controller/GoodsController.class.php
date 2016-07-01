@@ -25,13 +25,56 @@ class GoodsController extends Controller
      */
     public function index()
     {
-        //获取搜索的关键字model层需要做具体查询，这里用`article`.这样的方式
-        $name=I('get.name');
+        //获取搜索的关键字
+        $name=I('get.keyword');
         $cond=[];
         if(!empty($name)){
             $cond['name']=['like','%'.$name.'%'];
         }
-        $rows=$this->_model->getGoodsPage();
+        //获取商品分类
+        $goodsCategorie=I('get.goodsCategories');
+        if(!empty($goodsCategorie)){
+            $cond['goods_category_id']=$goodsCategorie;
+        }
+        //获取品牌
+        $brand=I('get.brands');
+        if(!empty($brand)){
+            $cond['brand_id']=$brand;
+        }
+        //获取推荐
+        $intro_type=I('get.intro_type');
+        if(!empty($intro_type)){
+            $cond[]=['goods_status &'.$intro_type];
+        }
+
+        //获取是否上架
+        $is_on_sale=I('get.is_on_sale');
+        if(strlen($is_on_sale)){
+            $cond['is_on_sale']=$is_on_sale;
+        }
+        //1.回显商品分类,
+        $goodsCategoryModel=D('GoodsCategory');
+        $goodsCategories=$goodsCategoryModel->getList();
+        $this->assign('goodsCategories',$goodsCategories);
+        //2.显示商品列表
+        $brandModel=D('Brand');
+        $brands=$brandModel->getList();
+        $this->assign('brands',$brands);
+        //显示促销信息
+        $intro_type=[
+         ['id'=>1,'name'=>'精品'],
+         ['id'=>2,'name'=>'新品'],
+         ['id'=>4,'name'=>'热销'],
+        ];
+        $this->assign('intro_type',$intro_type);
+        //显示是否上架
+        $is_on_sale=[
+            ['id'=>0,'name'=>'下架'],
+            ['id'=>1,'name'=>'上架'],
+        ];
+        $this->assign('is_on_sale',$is_on_sale);
+
+        $rows=$this->_model->getGoodsPage($cond);
         $this->assign($rows);
         $this->display();
     }
@@ -42,7 +85,7 @@ class GoodsController extends Controller
     {
         if(IS_POST){
             //为什么我这边要加上标记才能获取到??直接用self::MODEL_INSERT这个模式不行
-            if($this->_model->create('','register')===false){
+            if($this->_model->create()===false){
                 $this->error(getError($this->_model));
             }
 
@@ -96,6 +139,9 @@ class GoodsController extends Controller
         }
     }
 
+    /**
+     * 获取公共数据
+     */
     public function _before_view()
     {
         //1.回显商品分类,用ztree展示

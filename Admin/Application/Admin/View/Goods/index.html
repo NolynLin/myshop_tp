@@ -15,35 +15,16 @@
     <div style="clear:both"></div>
 </h1>
 <div class="form-div">
-    <form action="" name="searchForm">
+    <form action="{:U('index')}" name="searchForm">
         <img src="__IMG__/icon_search.gif" width="26" height="22" border="0" alt="search" />
         <!-- 分类 -->
-        <select name="cat_id">
-            <option value="0">所有分类</option>
-            <foreach name="cat_list" item="val">
-                <option value=""></option>
-            </foreach>
-        </select>
+        {:getSelectHtml($goodsCategories,'id','name','goodsCategories',I('get.goodsCategories'))}
         <!-- 品牌 -->
-        <select name="brand_id">
-            <option value="0">所有品牌</option>
-            <foreach name="brand_list" item="val">
-            <option value=""></option>
-            </foreach>
-        </select>
+        {:getSelectHtml($brands,'id','name','brands',I('get.brands'))}
         <!-- 推荐 -->
-        <select name="intro_type">
-            <option value="0">全部</option>
-            <option value="is_best">精品</option>
-            <option value="is_new">新品</option>
-            <option value="is_hot">热销</option>
-        </select>
+        {:getSelectHtml($intro_type,'id','name','intro_type',I('get.intro_type'))}
         <!-- 上架 -->
-        <select name="is_on_sale">
-            <option value=''>全部</option>
-            <option value="1">上架</option>
-            <option value="0">下架</option>
-        </select>
+        {:getSelectHtml($is_on_sale,'id','name','is_on_sale',I('get.is_on_sale'))}
         <!-- 关键字 -->
         关键字 <input type="text" name="keyword" size="15" />
         <input type="submit" value=" 搜索 " class="button" />
