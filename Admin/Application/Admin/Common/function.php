@@ -24,7 +24,7 @@ function getError(\Think\Model $model)
 function getSelectHtml (array $data,$name_filed,$value_filed,$name='',$default_value='')
 {
     $html='<select name="'.$name.'" class="'.$name.'">';
-    $html.='<option value="">请选择</option>';
+    $html.='<option value="salt_mcrypt">请选择</option>';
     foreach($data as $key=>$val){
         if((string)$val[$name_filed]===$default_value){
             $html.='<option value="'.$val[$name_filed].'" selected="selected">'.$val[$value_filed].'</option>';
@@ -34,4 +34,14 @@ function getSelectHtml (array $data,$name_filed,$value_filed,$name='',$default_v
     }
     $html.='</select>';
     return $html;
+}
+
+/**
+ * 生成加盐加密密码
+ * @param $password
+ * @param $salt
+ * @return string
+ */
+function salt_mcrypt($password,$salt){
+    return md5(md5($password).$salt);
 }

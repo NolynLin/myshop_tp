@@ -84,7 +84,7 @@ class PermissionController extends Controller
     private function _before_view()
     {
         $permissions=$this->_model->getList();
-        $permissions[]=['id'=>0,'name'=>'顶级分类','parent_id'=>0];
+        array_unshift($permissions,['id'=>0,'name'=>'顶级分类','parent_id'=>0]);
         $this->assign('permissions',json_encode($permissions));
     }
 }

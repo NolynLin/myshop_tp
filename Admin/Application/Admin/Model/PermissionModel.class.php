@@ -66,6 +66,21 @@ class PermissionModel extends Model
     public function removePermission($id)
     {
         $this->startTrans();
+        //删除角色所拥有的当前权限，如果当前权限拥有子权限，也要将子权限一起删除
+        //获取后代权限
+        $permission_info = $this->field('lft,rght')->find($id);
+        $cond = [
+            'lft'=>['egt',$permission_info['lft']],
+            'rght'=>['elt',$permission_info['rght']],
+        ];
+        $permission_ids = $this->where($cond)->getField('id',true);
+        //删除角色-权限中间表的相关权限记录
+        $role_permission_model = M('RolePermission');
+        if($role_permission_model->where(['permission_id'=>['in',$permission_ids]])->delete()===false){
+            $this->error = '删除角色-权限关联失败';
+            $this->rollback();
+            return false;
+        }
         //删除权限
         $mylogic=D('DbMysql','Logic');
         $nestedsets=new NestedSets($mylogic,$this->trueTableName,'lft','rght','parent_id','id','level');
@@ -74,13 +89,7 @@ class PermissionModel extends Model
             $this->rollback();
             return false;
         }
-        //删除角色所拥有的当前权限
-        $role_permission_model=M('RolePermission');
-        if($role_permission_model->where(['permission_id'=>$id])->delete()===false){
-            $this->error='删除角色拥有的权限失败';
-            $this->rollback();
-            return false;
-        }
+
         $this->commit();
         return true;
 

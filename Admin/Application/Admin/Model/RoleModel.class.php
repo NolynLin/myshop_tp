@@ -87,7 +87,9 @@ class RoleModel extends Model
     }
 
     /**
-     * 保存角色基本信息,并且删除旧的角色权限,添加新的角色权限
+     * 1.保存角色基本信息,
+     * 2.删除旧的角色权限,
+     * 3.添加新的角色权限
      * @return bool
      */
     public function saveRole()
@@ -125,6 +127,15 @@ class RoleModel extends Model
         return true;
     }
 
+    /**
+     * 删除角色,
+     * 1.先删除角色,
+     * 2.再删除角色拥有的权限,
+     * 3.删除管理员拥有的当前角色
+     * @param $id
+     * @return bool
+     */
+
     public function removeRole($id)
     {
         $this->startTrans();
@@ -141,8 +152,34 @@ class RoleModel extends Model
             $this->rollback();
             return false;
         }
+        //删除管理员拥有的当前角色
+        $this->remove_admin_role($id);
         $this->commit();
         return true;
     }
+
+    /**
+     * 获取角色列表
+     * @return mixed
+     */
+    public function getList()
+    {
+        return $this->where(['status'=>1])->select();
+    }
+
+    /**
+     *
+     * @param $id
+     * @return bool
+     */
+     protected function remove_admin_role($id){
+
+         $admin_role_model=M('AdminRole');
+         if($admin_role_model->where(['role_id'=>$id])->delete()===false){
+             $this->error='删除管理员拥有的权限失败';
+             $this->rollback();
+             return false;
+         }
+     }
 
 }
