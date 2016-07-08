@@ -24,8 +24,8 @@
                 <td>
                     <select name="article_category_id" class="article_category_id">
                         <option value="">请选择</option>
-                        <volist name="rows" id="roww">
-                        <option value="{$key}">{$roww}</option>
+                        <volist name="rows" id="row">
+                        <option value="{$key}">{$row}</option>
                         </volist>
                     </select>
                 </td>
@@ -33,7 +33,7 @@
             <tr>
                 <td class="label">排序</td>
                 <td>
-                    <input type="text" name="sort" maxlength="40" size="15" value="{$sort}" />
+                    <input type="text" name="sort" maxlength="40" size="15" value="{$sort|default=50}" />
                 </td>
             </tr>
             <tr>
@@ -58,7 +58,7 @@
             <tr>
                 <td colspan="2" align="center"><br />
                     <input type="submit" class="button" value=" 确定 " />
-                    <input type="hidden" class="button" name="id" value=" {$id} " />
+                    <input type="hidden" class="button" name="id" value="{$id}" />
                     <input type="reset" class="button" value=" 重置 " />
                 </td>
             </tr>
@@ -70,7 +70,9 @@
 <script type="text/javascript">
     $(function(){
         $('.status').val([{$status|default=1}]);
-        $('.article_category_id').val([{$row['id']}])
+        <present name="id">
+        $('.article_category_id').val([{$id}])
+        </present>
     })
 </script>
 <div id="footer">

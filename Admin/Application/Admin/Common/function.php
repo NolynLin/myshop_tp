@@ -45,3 +45,67 @@ function getSelectHtml (array $data,$name_filed,$value_filed,$name='',$default_v
 function salt_mcrypt($password,$salt){
     return md5(md5($password).$salt);
 }
+
+/**
+ * 存在则设值,没有就获取值 获取登陆用户信息
+ * @param null $data
+ * @return mixed
+ */
+function login($data=null)
+{
+
+    if (is_null($data)) {
+//        dump(session('USER_INFO'));
+        return session('USER_INFO');
+    } else {
+        session('USER_INFO', $data);
+    }
+}
+
+/**
+ * 设置保存自动登陆的cookie信息
+ * @param null $data
+ * @return mixed
+ */
+function auto_login($data=null)
+{
+
+    if (is_null($data)) {
+        return cookie('USER_AUTO_LOGIN_TOKEN');
+    } else {
+        cookie('USER_AUTO_LOGIN_TOKEN',$data,604800);
+    }
+}
+/**
+ * 存在则设值,没有就获取值 获取权限路径
+ * @param null $data
+ * @return mixed
+ */
+function permission_pathes($data=null){
+    if(is_null($data)){
+        $pathes=session('PERMISSIONS_PATHS');
+        if(!is_array($pathes)){
+            $pathes=[];
+        }
+        return $pathes;
+    }else{
+        session('PERMISSIONS_PATHS',$data);
+    }
+}
+
+/**
+ * 将权限id保存到session中
+ * @param null $data
+ * @return array|mixed
+ */
+function permission_pids($data=null){
+    if(is_null($data)){
+        $pids=session('PERMISSION_PIDS');
+        if(!is_array($pids)){
+            $pids=[];
+        }
+        return $pids;
+    }else{
+        session('PERMISSION_PIDS',$data);
+    }
+}

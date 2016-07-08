@@ -74,10 +74,17 @@ class PermissionModel extends Model
             'rght'=>['elt',$permission_info['rght']],
         ];
         $permission_ids = $this->where($cond)->getField('id',true);
-        //删除角色-权限中间表的相关权限记录
+        //删除权限-角色中间表的相关权限记录
         $role_permission_model = M('RolePermission');
         if($role_permission_model->where(['permission_id'=>['in',$permission_ids]])->delete()===false){
             $this->error = '删除角色-权限关联失败';
+            $this->rollback();
+            return false;
+        }
+        //删除权限-菜单中间表的相关权限记录
+        $role_permission_model = M('MenuPermission');
+        if($role_permission_model->where(['permission_id'=>['in',$permission_ids]])->delete()===false){
+            $this->error = '删除菜单-权限关联失败';
             $this->rollback();
             return false;
         }

@@ -164,4 +164,27 @@ class MenuModel extends Model
         $this->commit();
         return true;
     }
+
+    /**
+     * 获取可见菜单
+     * @return array
+     */
+    public function getMenuList()
+    {
+        //如果是超级管理员,那么所有菜单可见
+        if(login()['username']=='admin'){
+            $admin_menus=$this->alias('m')->distinct(true)->field('path,id,name,parent_id')->join('__MENU_PERMISSION__ as mp on mp.menu_id=m.id')->select();
+        }else{
+        //获取用户权限id
+        $admin_permissionids=permission_pids();
+        //获取用户菜单id,根据权限id,去查询,这里用in表达式,
+        if($admin_permissionids){
+            $admin_menus=$this->alias('m')->distinct(true)->field('path,id,name,parent_id')->join('__MENU_PERMISSION__ as mp on mp.menu_id=m.id')->where(['permission_id'=>['in',$admin_permissionids]])->select();
+        }else{
+            $admin_menus=[];
+        }
+        }
+        return $admin_menus;
+        //获取菜单信息
+    }
 }

@@ -38,7 +38,7 @@
                 <td align="center">
                 <a href="{:U('edit','id='.$row['id'])}" title="编辑"><img src="__IMG__/icon_edit.gif" width="16" height="16" border="0" /></a>
                 <a href="{:U('remove','id='.$row['id'])}" onclick="" title="回收站"><img src="__IMG__/icon_trash.gif" width="16" height="16" border="0" /></a>
-                    <a href="{:U('remove','id='.$row['id'])}" >重置密码</a>
+                    <a href="{:U('repassword','id='.$row['id'])}"  title="重置密码"><img src="__IMG__/icon_restart.gif" width="16" height="16" border="0" /></a>
                 </td>
             </tr>
             </foreach>
@@ -59,9 +59,26 @@
 </div>
     <js href='__JS__/jquery.min.js'/>
     <js href='__TREEGRID__/js/jquery.treegrid.js'/>
+    <js href='__LAYER__/layer.js' />
     <script type="text/javascript">
         $(function(){
-            $('.tree').treegrid();
+//            $('.repassword').click(function () {
+//                layer.prompt({
+//                    formType: 1,
+//                    title: '请输入新密码'
+//                }, function(value, index, elem){
+//                    alert(value); //得到value
+//                    layer.close(index);
+//                });
+//                var password=prompt('请输入新密码');
+//                var data={
+//                    password:password,
+//                };
+//                $.getJSON("{:U('repassword')}",data,function (response){
+//                    layer.alert(response,{icon:6});
+//                })
+//
+//            });
         })
 
     </script>

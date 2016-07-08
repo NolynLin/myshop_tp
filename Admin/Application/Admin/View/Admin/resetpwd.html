@@ -1,0 +1,103 @@
+<extend name="Layout:common"/>
+<block name="title">
+    <title>ECSHOP 管理中心 - 添加管理员 </title>
+    <link rel="stylesheet" href="__ZTREE__/css/zTreeStyle/zTreeStyle.css" type="text/css"/>
+    <style type="text/css">
+        ul.ztree{
+            margin-top: 10px;
+            border: 1px solid #617775;
+            background: #f0f6e4;
+            width: 220px;
+            overflow-y: scroll;
+            overflow-x: auto;
+        }
+    </style>
+</block>
+<block name="main">
+<h1>
+    <span class="action-span"><a href="{:U('index')}">管理员列表</a></span>
+    <span class="action-span1"><a href="#">ECSHOP 管理中心</a></span>
+    <span id="search_id" class="action-span1"> - 添加管理员 </span>
+</h1>
+<div style="clear:both"></div>
+<div class="main-div">
+    <form method="post" action="{:U()}"enctype="multipart/form-data" >
+        <table cellspacing="1" cellpadding="3" width="100%">
+            <tr>
+                <td class="label">管理员名称</td>
+                <td>
+                        {$row.username}<span class="require-field">*</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">新密码</td>
+                <td>
+                     <input type="password" name="resetpwd" maxlength="60"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">管理员角色</td>
+                <td>
+                    <div id='role_ids'>
+                    </div>
+                    <ul id="roles" class="ztree"  ></ul>
+                </td>
+            </tr>
+                <tr>
+                    <td class="label">邮箱</td>
+                    <td>
+                        {$row.email}
+                    </td>
+                </tr>
+
+            <tr>
+                <td colspan="2" align="center"><br />
+                    <input type="submit" class="button" value=" 确定 " />
+                    <input type="hidden" name="id" value="{$row.id}" />
+                    <input type="reset" class="button" value=" 重置 " />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div id="footer">
+共执行 1 个查询，用时 0.018952 秒，Gzip 已禁用，内存占用 2.197 MB<br />
+版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。
+</div>
+    <js href='__JS__/jquery.min.js'/>
+    <script type="text/javascript" src="__ZTREE__/js/jquery.ztree.core.js"></script>
+    <!--使用check类型,必须要引入-->
+    <script type="text/javascript" src="__ZTREE__/js/jquery.ztree.excheck.js"></script>
+<script type="text/javascript">
+    var setting = {
+        data: {
+            simpleData: {
+                enable: true,
+                pIdKey: 'parent_id',
+            },
+        },
+        //            由于一个管理员可能是多权限,因此要用这种展示方式
+        check: {
+            enable: true,
+            chkboxType: {"Y": "s", "N": "s"},
+        },
+    };
+    //接收传过来的管理员数据，json格式的
+    var roles={$roles};
+    var roles_ztree=$.fn.zTree.init($("#roles"), setting,roles);
+//    $(roles)
+            /////////////回显管理员信息/////////////
+    <present name="row">
+       //获取所有的权限id
+           var role_ids={$row.role_ids};
+    //如果当前管理员有权限才去遍历id,将每一个节点选中
+    if({$row.role_ids}){
+    $(role_ids).each(function(i,v){
+//            <!--根据父级id找到父级节点,回显数据-->
+       var parent_node=roles_ztree.getNodeByParam('id',v);
+        roles_ztree.checkNode(parent_node,true);
+    })};
+    </present>
+</script>
+</block>

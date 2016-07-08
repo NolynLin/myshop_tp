@@ -1,0 +1,202 @@
+<extend name="Layout:member_base"/>
+<block name="css">
+    <style type="text/css">
+        .errormsg{
+            padding-left: 1em;
+            color: red;
+        }
+    </style>
+</block>
+    <block name="content">
+	<div class="login w990 bc mt10 regist">
+		<div class="login_hd">
+			<h2>用户注册</h2>
+			<b></b>
+		</div>
+		<div class="login_bd">
+			<div class="login_form fl">
+				<form action="{:U()}" method="post" id="regForm">
+					<ul>
+						<li>
+							<label for="">用户名：</label>
+							<input type="text" class="txt" name="username" /><span class="errormsg"></span><img src="" alt="" class="success"/>
+							<p>3-16位字符，可由中文、字母、数字和下划线组成</p>
+						</li>
+						<li>
+							<label for="">密码：</label>
+							<input type="password" class="txt" name="password" id="password" /><span class="errormsg"></span><img src="" alt="" class="success"/>
+							<p>6-16位字符，可使用字母、数字和符号的组合，不建议使用纯数字、纯字母、纯符号</p>
+						</li>
+						<li>
+							<label for="">确认密码：</label>
+							<input type="password" class="txt" name="repassword" /><span class="errormsg"></span><img src="" alt="" class="success"/>
+							<p> <span>请再次输入密码</p>
+						</li>
+						<li>
+							<label for="">邮箱：</label>
+							<input type="text" class="txt" name="email" /><span class="errormsg"></span><img src="" alt="" class="success"/>
+							<p>邮箱必须合法</p>
+						</li>
+						<li>
+							<label for="">手机号码：</label>
+							<input type="text" class="txt" value="" name="tel" id="tel" placeholder=""/><span class="errormsg"></span><img src="" alt="" class="success"/>
+						</li>
+						<li>
+							<label for="">验证码：</label>
+							<input type="text" class="txt" value="" placeholder="请输入短信验证码" name="captcha" disabled="disabled" id="captcha"/> <input type="button" onclick="bindPhoneNum(this)" id="get_captcha" value="获取验证码" style="height: 25px;padding:3px 8px"/><span class="errormsg"></span><img src="" alt="" class="success"/>
+							
+						</li>
+						<li class="checkcode">
+							<label for="">验证码：</label>
+							<input type="text"  name="checkcode" />
+							<img src="{:U('Captcha/captcha',['nocache'=>NOW_TIME])}" id="captcha_pic" alt="" />
+							<span>看不清？<a href="javascript:;"  onclick="checkCaptcha()">换一张</a></span><span class="errormsg"></span>
+						</li>
+						
+						<li>
+							<label for="">&nbsp;</label>
+							<input type="checkbox" name="agree" class="chb" checked="checked" /> 我已阅读并同意《用户注册协议》<span class="errormsg"></span>
+						</li>
+						<li>
+							<label for="">&nbsp;</label>
+							<input type="submit" value="" class="login_btn" />
+						</li>
+					</ul>
+				</form>
+
+				
+			</div>
+			
+			<div class="mobile fl">
+				<h3>手机快速注册</h3>			
+				<p>中国大陆手机用户，编辑短信 “<strong>XX</strong>”发送到：</p>
+				<p><strong>1069099988</strong></p>
+			</div>
+
+		</div>
+	</div>
+    </block>
+    <block name="js">
+        <!-- 底部版权 end -->
+
+	<script type="text/javascript">
+		function bindPhoneNum(){
+
+			var url="{:U('TelCaptcha/regSms')}";
+			var tel={tel:$('#tel').val()};
+            if(!$('#tel').val()){
+                alert('请输入手机号码!');
+                return false;
+            }
+            //启用输入框
+            $('#captcha').prop('disabled',false);
+			$.getJSON(url,tel, function (responce) {
+			});
+			var time=60;
+			var interval = setInterval(function(){
+				time--;
+				if(time<=0){
+					clearInterval(interval);
+					var html = '获取验证码';
+					$('#get_captcha').prop('disabled',false);
+				} else{
+					var html = time + ' 秒后再次获取';
+					$('#get_captcha').prop('disabled',true);
+				}
+				
+				$('#get_captcha').val(html);
+			},1000);
+		}
+		function checkCaptcha(){
+			$('#captcha_pic').attr('src',"{:U('Captcha/captcha')}?nocache="+new Date().getTime());
+		}
+		///////////使用jquery-validation验证表单///////////////////
+        var setting={
+            //验证规则
+            rules: {
+                username: {
+                    required: true,
+                    rangelength: [3,20],
+                    remote:"{:U('Member/checkByPram')}",
+                },
+                password: {
+                    required: true,
+                    rangelength: [6,16]
+                },
+               repassword: {
+                    required: true,
+                    equalTo: "#password"
+                },
+                email: {
+                    required: true,
+                    email: true,
+                    remote:"{:U('Member/checkByPram')}",
+                },
+                checkcode:{
+                    required: true
+                },
+                captcha: {
+                    required: true
+                },
+                tel: {
+                    required: true,
+                    telNum:true
+                },
+                agree: "required"
+            },
+
+            //提示信息
+            messages: {
+                username: {
+                    required: "用户名不能为空",
+                    rangelength: "用户名长度为3-16位字符",
+                    remote:'用户名已存在'
+                },
+                password: {
+                    required: "密码不能为空",
+                    rangelength: "密码长度为6-16位字符"
+                },
+                repassword: {
+                    required: "确认密码不能为空",
+                    equalTo: "两次密码不一致"
+                },
+                email: {
+                    required: '邮箱不能为空',
+                    email: '邮箱格式不合法',
+                    remote:'邮箱已存在'
+
+                },
+                tel:{
+                    required: '手机号不能为空'
+                },
+                checkcode:'图片验证码不能为空',
+                captcha:'手机验证码不能为空',
+                agree: "请同意我们的协议"
+            },
+            //将错误信息自定义放置
+            errorPlacement:function(error,node){
+                var node=node[0];
+                var msg_node=$(node).siblings('.errormsg')[0];
+                var success_node=$(node).siblings('.success')[0];
+                $(success_node).attr('src','');
+                var error_msg=$(error[0]).text();
+                $(msg_node).text(error_msg);
+            },
+            success: function (error,node) {
+                var success_node=$(node).siblings('.success')[0];
+                $(success_node).attr('src',"__IMG__/yes.gif")
+            }
+        };
+        //
+        $("#regForm").validate(setting);
+////////////////////验证手机号码///////////
+        //添加自定义方法,验证手机号
+        $.validator.addMethod('telNum',check_telNum,'手机号码不合法')
+        function check_telNum(tel){
+            //正则表达式
+            var reg=/^1[35784]\d{9}$/;
+            return reg.test(tel);
+        }
+        //设置ajax的操作方式,设置为同步,因为如果用异步,在设值得时候,还没有这个值,外部就在使用了,所以不行,要用同步
+	</script>
+    </block>

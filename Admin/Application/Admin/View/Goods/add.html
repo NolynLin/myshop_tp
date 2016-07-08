@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="__ZTREE__/css/zTreeStyle/zTreeStyle.css" type="text/css"/>
     <css href='__UPLOADIFY__/common.css'/>
     <style type="text/css">
-        .gallery-upload-pre-item img{
+        #logo_goods,.gallery-upload-pre-item img{
             width:150px;
         }
 
@@ -49,6 +49,14 @@
                     <td class="label">商品名称：</td>
                     <td><input type="text" name="name" value="{$row.name}" size="30" />
                     <span class="require-field">*</span></td>
+                </tr>
+                <tr>
+                    <td class="label">商品logo：</td>
+                    <td>
+                        <input type="file" id="goods_logo">
+                        <input type="hidden" name="logo" value="{$row.logo}"  id="logo" />
+                        <img src="{$row.logo}" id="logo_goods">
+                    </td>
                 </tr>
                 <tr>
                     <td class="label">商品货号： </td>
@@ -236,7 +244,9 @@
 //           回显商品有哪些推荐
             $('.goods_status').val({$row.goods_status|default='[1]'});
             //////////////////////加载ue/////
+//            UE.getEditor('goodsintro',{serverUrl: '{:U("Editor/Ueditor")}'});
             UE.getEditor('goodsintro');
+
             ////////////使用ztree展示商品分类列表//////////
             var setting={
                 data:{
@@ -268,6 +278,29 @@
                 $('#goods_category_name').val(parent_node.name);
                 $('#goods_category_id').val(parent_node.id);
             </present>
+        })
+        ///////////用uploadify上传图片//////////
+        $('#goods_logo').uploadify({
+            'buttonText':'选择图片',
+            'fileObjName':'file_data',
+            'swf'  :  '__UPLOADIFY__/uploadify.swf',
+            'uploader'  :  '{:U("Upload/upload")}',
+            //上传成功后执行回调函数
+            onUploadSuccess: function (file_node,response) {
+//                    response是php处理图片上传后返回的数据,是由我们决定的有哪些数据
+                var data= $.parseJSON(response);
+                console.log(data);
+                if(data.status){
+//                        上传成功
+                    layer.alert(data.msg,{icon:6});
+//                        1.需要将路径放到一个隐藏域里面
+                    $('#logo').val(data.file_url);
+//                        2.要在当前展示的图片后面再显示上传的图片
+                    $('#logo_goods').attr('src',data.file_url);
+                }else {
+                    layer.alert(data.msg,{icon:5});
+                }
+            }
         })
         </script>
 </block>

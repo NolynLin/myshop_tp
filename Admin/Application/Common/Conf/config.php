@@ -37,6 +37,28 @@ return array(
         '__TREEGRID__'=>PZ_PATH.'/Public/ext/treegrid',
         '__UEDITOR__'=>PZ_PATH.'/Public/ext/ueditor',
     ),
-    'DEFAULT_CONTROLLER'    =>  'Supplier', // 默认控制器名称
+    'DEFAULT_CONTROLLER'    =>  'Admin', // 默认控制器名称
+    'DEFAULT_ACTION'        =>  'login', // 默认操作名称
     'UPLOAD_SETTING' =>require 'upload.php',
+     //调试页面
+//    'SHOW_PAGE_TRACE' =>true,
+
+    'ACCESS_IGNORE'=>[
+        //配置所有用户都能访问的页面
+      'IGNORE'=>[
+          'Admin/Admin/login',
+          'Admin/Captcha/getcaptcha',
+      ] ,
+        //登陆后用户能访问的公共页面
+        'USER_IGNORE'=>[
+            'Admin/Index/index',
+            'Admin/Index/main',
+            'Admin/Index/top',
+            'Admin/Index/menu',
+            'Admin/Admin/logout',
+            'Admin/Admin/repassword',
+            'Admin/Upload/upload',
+        ]
+    ],
+    'COOKIE_PREFIX'=>'admin_shop_com_',
 );
