@@ -1,7 +1,7 @@
 <?php
 define('PZ_PATH','http://www.shop.com');
 return array(
-    'URL_MODEL'            =>1, /*设置// URL访问模式,可选参数0、1、2、3,代表以下四种模式：
+    'URL_MODEL'            =>2, /*设置// URL访问模式,可选参数0、1、2、3,代表以下四种模式：
     // 0 (普通模式); 1 (PATHINFO 模式); 2 (REWRITE  模式); 3 (兼容模式)  默认为PATHINFO 模式*/
     //分页相关的配置
     'PAGE_SETTING'=>[
@@ -38,8 +38,8 @@ return array(
         '__UEDITOR__'=>PZ_PATH.'/Public/ext/ueditor',
         '__JQUERY_VALIDATE__'=>PZ_PATH.'/Public/ext/jquery-validate',
     ),
-    'DEFAULT_CONTROLLER'    =>  'Member', // 默认控制器名称
-    'DEFAULT_ACTION'        =>  'reg', // 默认操作名称
+    'DEFAULT_CONTROLLER'    =>  'Index', // 默认控制器名称
+    'DEFAULT_ACTION'        =>  'index', // 默认操作名称
 //    'UPLOAD_SETTING' =>require 'upload.php',
      //调试页面
     'SHOW_PAGE_TRACE' =>true,
@@ -72,4 +72,5 @@ return array(
     'DATA_CACHE_TYPE'      =>  'Redis',//数据缓存机制
     'REDIS_HOST'           =>  '127.0.0.1',
     'REDIS_PORT'           =>  '6379',
+    'COOKIE_SHOPPING_CAR'  =>  'MEMBER_SHOPPING_CAR'
 );

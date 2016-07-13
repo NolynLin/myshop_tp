@@ -119,8 +119,38 @@ class GoodsModel extends Model
             $this->rollback();
             return false;
         }
+        //添加会员价,存在字段才去操作
+        if($this->_save_member_price($goods_id)===false){
+            $this->error='保存会员价失败';
+            $this->rollback();
+            return false;
+        }
         $this->commit();
         return true;
+    }
+
+    /**
+     * 保存会员价
+     * @param $goods_id
+     * @return bool|string
+     */
+    protected function _save_member_price($goods_id){
+        //先删除原有的
+        $member_goods_price_model=M('MemberGoodsPrice');
+        $member_goods_price_model->where('goods_id='.$goods_id)->delete();
+        if(I('post.member_level_price')){
+            $data=[];
+            foreach(I('post.member_level_price') as $key=>$member_pric){
+                $data[]=[
+                    'goods_id'=>$goods_id,
+                    'member_level_id'=>$key,
+                    'price'=>$member_pric
+                ];
+            }
+            return $member_goods_price_model->addAll($data);
+        }else{
+            return '';
+        }
     }
 
     /**
@@ -176,6 +206,12 @@ class GoodsModel extends Model
             $this->rollback();
             return false;
         }
+        //4.,修改会员价
+        if($this->_save_member_price($id)===false){
+            $this->error='保存会员价失败';
+            $this->rollback();
+            return false;
+        }
         $this->commit();
         return true;
     }
@@ -206,7 +242,10 @@ class GoodsModel extends Model
         //这里要获取所有的path,所以参数要这样传,并且这里获取了id,后面删除图片的时候需要用到
         $paths=$goodsgalleryModel->getFieldByGoodsId($id,'id,path');
         $row['path']=$paths;
-        return $row;
+        //获取商品的会员价
+        $member_goods_price_model=M('MemberGoodsPrice');
+        $member_goods_price=$member_goods_price_model->where('goods_id='.$id)->getField('member_level_id,price');
+        return  compact('row','member_goods_price');
     }
 
     /**

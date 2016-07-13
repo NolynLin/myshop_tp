@@ -104,6 +104,15 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="label">会员价：</td>
+                    <td>
+                        <foreach name="member_levels" item="member_level">
+                       {$member_level.name} <input type="text" name="member_level_price[{$member_level.id}]" value="{$member_goods_price[$member_level['id']]}" size="20" /><br/>
+                        </foreach>
+                    </td>
+
+                </tr>
+                <tr>
                     <td class="label">商品数量：</td>
                     <td>
                         <input type="text" name="stock" size="8" value="{$row.stock}"/>
@@ -159,7 +168,7 @@
             </table>
             <div class="button-div">
                 <input type="submit" value=" 确定 " class="button"/>
-                <input type="hidden" name="id" value=" {$row.id} " />
+                <input type="hidden" name="id" value="{$row.id}" />
                 <input type="reset" value=" 重置 " class="button" />
             </div>
         </form>
@@ -244,8 +253,8 @@
 //           回显商品有哪些推荐
             $('.goods_status').val({$row.goods_status|default='[1]'});
             //////////////////////加载ue/////
-//            UE.getEditor('goodsintro',{serverUrl: '{:U("Editor/Ueditor")}'});
-            UE.getEditor('goodsintro');
+            UE.getEditor('goodsintro',{serverUrl:'{:U('Editor/Ueditor')}'});
+//            UE.getEditor('goodsintro');
 
             ////////////使用ztree展示商品分类列表//////////
             var setting={

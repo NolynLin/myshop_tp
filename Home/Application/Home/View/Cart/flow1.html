@@ -1,11 +1,22 @@
 <extend name="Layout:Cart_base" />
 <block name="css">
     <link rel="stylesheet" href="__CSS__/cart.css" type="text/css">
+    <style type="text/css">
+        .cart-empty {
+            height: 98px;
+            padding: 80px 0 120px;
+            color: #333;
+        }
+        .message {
+            height: 98px;
+            padding-left: 341px;
+            background: url(__IMG__/no-login-icon.png) 250px 22px no-repeat;}
+        .message .txt {
+            font-size: 14px;
+        }
+    </style>
 </block>
-<block name="js">
-    <script type="text/javascript" src="__JS__/jquery-1.8.3.min.js"></script>
-    <script type="text/javascript" src="__JS__/cart1.js"></script>
-</block>
+
 <block name="content">
 	<!-- 主体部分 start -->
 	<div class="mycart w990 mt10 bc">
@@ -21,50 +32,71 @@
 				</tr>
 			</thead>
 			<tbody>
+			<foreach name="goods_info" item="goods">
 				<tr>
-					<td class="col1"><a href=""><img src="__IMG__/cart_goods1.jpg" alt="" /></a>  <strong><a href="">【1111购物狂欢节】惠JackJones杰克琼斯纯羊毛菱形格</a></strong></td>
-					<td class="col3">￥<span>499.00</span></td>
-					<td class="col4"> 
+					<td class="col1"><a href="{:U('Index/goods',['id'=>$goods['id']])}"><img src="{$goods.logo}" alt="" /></a>  <strong><a href="{:U('Index/goods',['id'=>$goods['id']])}">{$goods.name}</a></strong></td>
+					<td class="col3">￥<span>{$goods.shop_price}</span></td>
+					<td class="col4">
 						<a href="javascript:;" class="reduce_num"></a>
-						<input type="text" name="amount" value="1" class="amount"/>
+						<input type="text" name="amount" value="{$goods.amount}" class="amount"/>
 						<a href="javascript:;" class="add_num"></a>
 					</td>
-					<td class="col5">￥<span>499.00</span></td>
-					<td class="col6"><a href="">删除</a></td>
+					<td class="col5">￥<span>{$goods.stotal_price}</span></td>
+					<td class="col6"><a href="javascript:;" onclick="removeGoods(this)" goods_id="{$goods.id}">删除</a></td>
 				</tr>
-				<tr>
-					<td class="col1"><a href=""><img src="__IMG__/cart_goods2.jpg" alt="" /></a> <strong><a href="">九牧王王正品新款时尚休闲中长款茄克EK01357200</a></strong></td>
-					<td class="col3">￥<span>1102.00</span></td>
-					<td class="col4"> 
-						<a href="javascript:;" class="reduce_num"></a>
-						<input type="text" name="amount" value="1" class="amount"/>
-						<a href="javascript:;" class="add_num"></a>
-					</td>
-					<td class="col5">￥<span>1102.00</span></td>
-					<td class="col6"><a href="">删除</a></td>
-				</tr>
-				<tr>
-					<td class="col1"><a href=""><img src="__IMG__/cart_goods3.jpg" alt="" /></a> <strong><a href="">【1111购物狂欢节】捷王纯手工缝制休闲男鞋大头皮鞋 头层牛</a></strong></td>
-					<td class="col3">￥<span>269.00</span></td>
-					<td class="col4"> 
-						<a href="javascript:;" class="reduce_num"></a>
-						<input type="text" name="amount" value="1" class="amount"/>
-						<a href="javascript:;" class="add_num"></a>
-					</td>
-					<td class="col5">￥<span>269.00</span></td>
-					<td class="col6"><a href="">删除</a></td>
-				</tr>
+			</foreach>
 			</tbody>
+            <present name="goods_info">
 			<tfoot>
 				<tr>
-					<td colspan="6">购物金额总计： <strong>￥ <span id="total">1870.00</span></strong></td>
+					<td colspan="6">购物金额总计： <strong>￥ <span id="total">{$total_price}</span></strong></td>
 				</tr>
 			</tfoot>
 		</table>
 		<div class="cart_btn w990 bc mt10">
-			<a href="" class="continue">继续购物</a>
-			<a href="" class="checkout">结 算</a>
+			<a href="{:U('Index/index')}" class="continue">继续购物</a>
+			<a href="{:U('flow2')}" class="checkout">结 算</a>
 		</div>
+        <else />
+        <div class="cart_btn w990 bc mt10" style="position: absolute;padding-right: 10px;padding-top: 100px; width: 523px;">
+            <a href="{:U('Index/index')}" class="checkout">去购物 </a>
+        </div>
+        <div class="cart-empty">
+            <div class="message">
+                <ul>
+                    <li class="txt">
+                        购物车空空的哦~，去看看心仪的商品吧~
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+        </present>
 	</div>
 	<!-- 主体部分 end -->
+</block>
+<block name="js">
+    <script type="text/javascript" src="__JS__/cart1.js"></script>
+    <js href='__LAYER__/layer.js' />
+    <script type="text/javascript">
+        var url="{:U('Cart/remove')}";
+        function removeGoods(remove_node){
+            var data={
+                'id':$(remove_node).attr('goods_id')
+            };
+            $.getJSON(url,data, function (responce) {
+                if(responce.status){
+                    $(remove_node).closest('tr').empty();
+                    if(!responce.cook){
+                        location.href="{:U()}";
+                    }else {
+                        layer.alert('删除成功',{icon:6});
+                    }
+                }else {
+                    layer.alert('删除失败',{icon:5});
+                }
+            })
+        }
+    </script>
 </block>

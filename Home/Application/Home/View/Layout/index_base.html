@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <title>商品页面</title>
+    <title>{$meta_title}</title>
     <link rel="stylesheet" href="__CSS__/base.css" type="text/css">
     <link rel="stylesheet" href="__CSS__/global.css" type="text/css">
     <link rel="stylesheet" href="__CSS__/header.css" type="text/css">
@@ -75,8 +75,8 @@
                     <div class="uclist mt10">
                         <ul class="list1 fl">
                             <li><a href="">用户信息></a></li>
-                            <li><a href="">我的订单></a></li>
-                            <li><a href="">收货地址></a></li>
+                            <li><a href="{:U('OrderInfo/index')}">我的订单></a></li>
+                            <li><a href="{:U('Member/useraddress')}">收货地址></a></li>
                             <li><a href="">我的收藏></a></li>
                         </ul>
 
@@ -106,7 +106,7 @@
         <div class="cart fl">
             <dl>
                 <dt>
-                    <a href="">去购物车结算</a>
+                    <a href="{:U('Cart/flow1')}">去购物车结算</a>
                     <b></b>
                 </dt>
                 <dd>

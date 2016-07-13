@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <title>购物车页面</title>
+    <title>{$meta_title}</title>
     <link rel="stylesheet" href="__CSS__/base.css" type="text/css">
     <link rel="stylesheet" href="__CSS__/global.css" type="text/css">
     <link rel="stylesheet" href="__CSS__/header.css" type="text/css">
@@ -35,12 +35,12 @@
 <!-- 页面头部 start -->
 <div class="header w990 bc mt15">
     <div class="logo w990">
-        <h2 class="fl"><a href="index.html"><img src="__IMG__/logo.png" alt="京西商城"></a></h2>
-        <div class="flow fr">
+        <h2 class="fl"><a href="{:U('Index/index')}"><img src="__IMG__/logo.png" alt="京西商城"></a></h2>
+        <div class="flow fr {$Think.const.ACTION_NAME}">
             <ul>
-                <li class="cur">1.我的购物车</li>
-                <li>2.填写核对订单信息</li>
-                <li>3.成功提交订单</li>
+                <li class="<eq name='Think.const.ACTION_NAME' value='flow1'>cur</eq>">1.我的购物车</li>
+                <li class="<eq name='Think.const.ACTION_NAME' value='flow2'>cur</eq>">2.填写核对订单信息</li>
+                <li class="<eq name='Think.const.ACTION_NAME' value='flow3'>cur</eq>">3.成功提交订单</li>
             </ul>
         </div>
     </div>

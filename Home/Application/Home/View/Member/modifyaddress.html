@@ -1,0 +1,213 @@
+<extend name="Layout:index_base" />
+
+<block name="css">
+	<link rel="stylesheet" href="__CSS__/home.css" type="text/css">
+	<link rel="stylesheet" href="__CSS__/address.css" type="text/css">
+</block>
+<block name="content">
+	<!-- 页面主体 start -->
+	<div class="main w1210 bc mt10">
+		<div class="crumb w1210">
+			<h2><strong>我的XX </strong><span>> 我的订单</span></h2>
+		</div>
+		
+		<!-- 左侧导航菜单 start -->
+		<div class="menu fl">
+			<h3>我的XX</h3>
+			<div class="menu_wrap">
+				<dl>
+					<dt>订单中心 <b></b></dt>
+					<dd><b>.</b><a href="">我的订单</a></dd>
+					<dd><b>.</b><a href="">我的关注</a></dd>
+					<dd><b>.</b><a href="">浏览历史</a></dd>
+					<dd><b>.</b><a href="">我的团购</a></dd>
+				</dl>
+
+				<dl>
+					<dt>账户中心 <b></b></dt>
+					<dd class="cur"><b>.</b><a href="">账户信息</a></dd>
+					<dd><b>.</b><a href="">账户余额</a></dd>
+					<dd><b>.</b><a href="">消费记录</a></dd>
+					<dd><b>.</b><a href="">我的积分</a></dd>
+					<dd><b>.</b><a href="">收货地址</a></dd>
+				</dl>
+
+				<dl>
+					<dt>订单中心 <b></b></dt>
+					<dd><b>.</b><a href="">返修/退换货</a></dd>
+					<dd><b>.</b><a href="">取消订单记录</a></dd>
+					<dd><b>.</b><a href="">我的投诉</a></dd>
+				</dl>
+			</div>
+		</div>
+		<!-- 左侧导航菜单 end -->
+
+		<!-- 右侧内容区域 start -->
+		<div class="content fl ml10">
+			<div class="address_bd mt10">
+				<h4>修改收货地址</h4>
+				<form action="{:U()}" name="address_form" method="post">
+						<ul>
+							<li>
+								<label for=""><span>*</span>收 货 人：</label>
+								<input type="text" name="name" value="{$row.name}" class="txt" />
+							</li>
+							<li>
+								<label for=""><span>*</span>所在地区：</label>
+								<!--展示省份-->
+								{:getSelectHtml($provinces,id,name,province_id,$row['province_id'])}
+                                <input type="hidden" value="" name="province_name" id="province_name" >
+								<!--展示市级地区-->
+								{:getSelectHtml([],id,name,city_id)}
+                                <input type="hidden" value="" name="city_name" id="city_name" >
+								<!--展示县级地区-->
+								{:getSelectHtml([],id,name,area_id)}
+                                <input type="hidden" value="" name="area_name" id="area_name" >
+
+							</li>
+							<li>
+								<label for=""><span>*</span>详细地址：</label>
+								<input type="text" name="detail_address"  value="{$row.detail_address}" class="txt address"  />
+							</li>
+							<li>
+								<label for=""><span>*</span>手机号码：</label>
+								<input type="text" name="tel" value="{$row.tel}" class="txt" />
+							</li>
+							<li>
+								<label for="">&nbsp;</label>
+								<input type="checkbox" name="is_default" value="1" class="check" />设为默认地址
+							</li>
+							<li>
+								<label for="">&nbsp;</label>
+								<input type="submit" name="" class="btn" value="保存" />
+								<input type="hidden" name="id" value="{$row.id}" />
+							</li>
+						</ul>
+					</form>
+			</div>	
+
+		</div>
+		<!-- 右侧内容区域 end -->
+	</div>
+	<!-- 页面主体 end-->
+</block>
+<block name="js">
+	<script type="text/javascript" src="__JS__/home.js"></script>
+	<script type="text/javascript">
+		$(function () {
+            $('.check').val([{$row.is_default}]);
+//			省级节点
+			var province_node=$('.province_id');
+            //市级节点
+			var city_node=$('.city_id');
+            //地基节点
+			var area_node=$('.area_id');
+			var url="{:U('Member/getListByParentId')}";
+            //改变省时触发事件
+			province_node.change(function () {
+
+//                console.log(city_node[0].length);
+//                return;
+                //                首先清空市级数据
+				city_node.get(0).length=1;
+                //清空地级数据
+                area_node.get(0).length=1;
+                //清空隐藏域的值
+                $('#area_name').val('');
+                $('#city_name').val('');
+//                console.log(city_node.get(0));
+				var parent_id=province_node.val();
+                //判断父级id是否有值,有值才用ajax获取数据
+				var data={
+					'parent_id':parent_id
+				};
+                //获取省的名称
+                var province_name=province_node.find("option:selected").text();
+                //添加到隐藏域,用于数据库存储
+                $('#province_name').val(province_name);
+                if(!parent_id){
+                    return;
+                }
+				$.getJSON(url,data, function (cities) {
+					var html='';
+					$(cities).each(function (i,v) {
+						html+='<option value="'+ v.id+'">'+ v.name+'</option>'
+					});
+					city_node.append(html);
+				});
+		});
+            ///获取地级城市///
+            city_node.change(function () {
+                var parent_id=city_node.val();
+                //清空地级数据
+                area_node.get(0).length=1;
+                //清空隐藏域的值
+                $('#area_name').val('');
+                //判断父级id是否有值,有值才用ajax获取数据
+
+                var data={
+                    'parent_id':parent_id
+                };
+                //获取市的名称
+                var city_name=city_node.find("option:selected").text();
+                console.log(city_name);
+                //添加到隐藏域,用于数据库存储
+                $('#city_name').val(city_name);
+                if(!parent_id){
+                    return;
+                }
+                $.getJSON(url,data, function (areas) {
+                    var html='';
+                    $(areas).each(function (i,v) {
+                        html+='<option value="'+ v.id+'">'+ v.name+'</option>'
+                    });
+                    area_node.append(html);
+                    });
+                //监听地级县的change事件,改变了获取数据,由于这里才获取到了地级城市的数据,所以监听事件要放到ajax函数里面
+                area_node.change(function () {
+                    //获取市的名称
+                    var area_name=area_node.find("option:selected").text();
+                    if(area_name=='请选择'){
+                        $('#area_name').val('');
+                    }else {
+                        //添加到隐藏域,用于数据库存储
+                        $('#area_name').val(area_name);
+                    }
+
+
+                });
+            })
+            //////回显数据//////
+            //绑定隐藏域的input框数据
+            $('#province_name').val("{$row.province_name}");
+            $('#city_name').val("{$row.city_name}");
+            $('#area_name').val("{$row.area_name}");
+            //选中市级节点,根据以选中的省级节点id去查询数据
+            var data={
+                'parent_id':{$row.province_id}
+            };
+            $.getJSON(url,data, function (cities) {
+                var html='';
+                $(cities).each(function (i,v) {
+                    html+='<option value="'+ v.id+'">'+ v.name+'</option>'
+                });
+                city_node.append(html);
+                //选中市级节点
+                city_node.val([{$row.city_id}]);
+                //选中地级城市,通过被选中的市级节点去查询数据
+                var data={
+                    'parent_id':{$row.city_id}
+                };
+                $.getJSON(url,data, function (areas) {
+                    var html='';
+                    $(areas).each(function (i,v) {
+                        html+='<option value="'+ v.id+'">'+ v.name+'</option>'
+                    });
+                    area_node.append(html);
+                    //选中地级城市,回显完成
+                    area_node.val([{$row.area_id}]);
+            });
+            });
+		})
+	</script>
+</block>

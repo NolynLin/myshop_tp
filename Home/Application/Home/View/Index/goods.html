@@ -160,8 +160,8 @@
 						<div class="smallpic_wrap">
 							<ul>
 								<foreach name="goods_info.galleries" item="gallery">
-								<li >
-									<a href="javascript:void(0);" rel="{gallery: 'gal1', smallimage: '{$gallery}',largeimage: '{$gallery}'}"><img src="{$gallery}"></a>
+								<li class="<eq name='key' value='0'>cur</eq>" >
+									<a href="javascript:void(0);" rel="{gallery: 'gal1', smallimage: '{$gallery}',largeimage: '{$gallery}'}" class="<eq name='key' value='0'>zoomThumbActive</eq>"><img src="{$gallery}"></a>
 								</li>
 								</foreach>
 							</ul>

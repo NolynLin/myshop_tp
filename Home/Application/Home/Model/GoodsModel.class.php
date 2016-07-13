@@ -39,5 +39,4 @@ class GoodsModel extends Model
         $row['galleries']=M('GoodsGallery')->where(['goods_id'=>$id])->getField('path',true);
         return $row;
     }
-
 }

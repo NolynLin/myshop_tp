@@ -58,6 +58,7 @@ return array(
             'Admin/Admin/logout',
             'Admin/Admin/repassword',
             'Admin/Upload/upload',
+            'Admin/Editor/Ueditor'
         ]
     ],
     'COOKIE_PREFIX'=>'admin_shop_com_',

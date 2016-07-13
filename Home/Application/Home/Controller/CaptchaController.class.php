@@ -13,6 +13,9 @@ use Think\Verify;
 
 class CaptchaController extends Verify
 {
+    /**
+     * 展示验证码
+     */
     public function captcha()
     {
         $setting=['length'=>4];

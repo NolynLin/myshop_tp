@@ -47,6 +47,7 @@ class BrandController extends Controller
             if($this->_model->create()===false){
                 $this->error(getError($this->_model));
             }
+            dump($this->_model->data());exit;
             if($this->_model->save()===false){
                 $this->error('修改失败');
             }else{

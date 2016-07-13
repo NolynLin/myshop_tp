@@ -15,7 +15,7 @@ use Think\Verify;
 class MemberModel extends Model
 {
     //开启批量验证
-    protected $pathValidate=true;
+    protected $patchValidate=true;
     //验证表单数据
     //后台只需要验证用户名和邮箱重复与否,其余的必填,手机号格式,邮箱格式,在前台用jquery-validate验证
     protected $_validate=[
@@ -115,6 +115,9 @@ class MemberModel extends Model
         if(I('post.remember')){
             $this->_save_token($userinfo['id']);
         }
+        //登陆成功将cookie的购物车商品信息保存到数据库
+        $shopping_car_model=D('ShoppingCar');
+        $shopping_car_model->addCookie2db($userinfo['id']);
         return $userinfo;
     }
     /**

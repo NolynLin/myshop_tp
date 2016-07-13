@@ -120,7 +120,7 @@ class GoodsController extends Controller
         }else{
             //1.回显商品信息,这里要处理商品的status,所以单独写个方法
             $row=$this->_model->getGoodsInfo($id);
-            $this->assign('row',$row);
+            $this->assign($row);
             $this->_before_view();
             //回显商品图片
             $this->display('add');
@@ -156,6 +156,10 @@ class GoodsController extends Controller
         $supplierModel=D('Supplier');
         $suppliers=$supplierModel->getList();
         $this->assign('suppliers',$suppliers);
+        //4.显示会员等级
+        $member_level_model=D('MemberLevel');
+        $member_levels=$member_level_model->getList();
+        $this->assign('member_levels',$member_levels);
     }
 
     /**
