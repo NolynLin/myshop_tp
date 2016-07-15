@@ -77,33 +77,29 @@
 						</tr>
 					</thead>
 					<tbody>
+						<foreach name="rows" item="row">
 						<tr>
-							<td><a href="">852592106</a></td>
-							<td><a href=""><img src="__IMG__/order1.jpg" alt="" /></a></td>
-							<td>王超平</td>
-							<td>￥35.00 货到付款</td>
-							<td>2013-11-12 16:28:14</td>
-							<td>已取消</td>
-							<td><a href="">查看</a> | <a href="">删除</a></td>
+							<td><a href="">{$row.id}</a></td>
+							<td>
+                                <foreach name="row.goods_info" item="goods">
+                                <a href="{:U('Index/goods',['id'=>$goods['goods_id']])}"><img src="{$goods.logo}" alt="{$goods.goods_name}"  title="{$goods.goods_name}"/></a>
+                                </foreach>
+                            </td>
+							<td>{$row.name}</td>
+							<td>￥{$row.price} {$row.pay_type_name}</td>
+							<td>{$row.inputtime|date="Y-m-d H:m:s",###}</td>
+							<td>{$statues[$row['status']]}</td>
+							<td>
+                                <if condition="$row.status == 1">
+                                <a href="{:U('Pay/alipay',['id'=>$row['id']])}">立即支付</a> |
+                                    <elseif condition="$row.status == 3" />
+                                    <a href="{:U('OrderInfo/finish',['id'=>$row['id']])}">确认收货</a> |
+                                    <elseif condition="$row.status == 0" />
+                                    已取消 |
+                                </if>
+                                <a href="">查看</a> | <a href="">删除</a></td>
 						</tr>
-						<tr>
-							<td><a href="">852571653</a></td>
-							<td><a href=""><img src="__IMG__/order2.jpg" alt="" /></a></td>
-							<td>王超平</td>
-							<td>￥35.00 在线支付</td>
-							<td>2013-11-13 19:28:14</td>
-							<td>已完成</td>
-							<td><a href="">查看</a> | <a href="">删除</a></td>
-						</tr>
-						<tr>
-							<td><a href="">471196680</a></td>
-							<td><a href=""><img src="__IMG__/order2.jpg" alt="" /></a></td>
-							<td>王超平</td>
-							<td>￥169.00 货到付款</td>
-							<td>2013-02-20 23:00:00</td>
-							<td>已完成</td>
-							<td><a href="">查看</a> | <a href="">删除</a></td>
-						</tr>
+                        </foreach>
 					</tbody> 
 				</table>
 			</div>

@@ -13,12 +13,20 @@ use Think\Model;
 
 class OrderInfoModel extends Model
 {
+    public $statues=[
+        0=>'取消',
+        1=>'待付款',
+        2=>'待发货',
+        3=>'待收货',
+        4=>'交易完成'
+    ];
     /**
      * 添加订单
      * 1.保存订单基本信息
      * 2.根据生成的订单id,保存订单详情
      * 3.获取发票信息并保存
      * 4.清空购物车
+     * 5.判断库存
      * @return bool
      */
 
@@ -44,6 +52,39 @@ class OrderInfoModel extends Model
         $shopping_car_info=$shopping_car_model->getShoppingCarGoodsList();
         $this->data['price']=$shopping_car_info['total_price'];
         $this->data['status']=1;//订单创建时默认待支付
+        $this->data['inputtime']=NOW_TIME;//订单创建时默认待支付
+        //5判断库存
+        $cond['_logic']='OR';
+        //循环拼接条件,当前商品的id,并且库存小于购物车数量,
+        //如果能取到数据,说明购物车数量大于库存,不让买,并且给出提示
+        //如果取不到数据,说明库存大于购物车,可以买
+        foreach($shopping_car_info['goods_info'] as $goods_id=>$goods){
+            $cond[]=[
+                'id'=>$goods_id,
+                'stock'=>['lt',$goods['amount']]
+            ];
+        }
+        $goods_model=M('Goods');
+        $error='';
+        //查询数据
+        $goodses=$goods_model->where($cond)->select();
+        //sql语句最后转成了SELECT * FROM `goods` WHERE (  `id` = 12 AND `stock` < '3' ) OR (  `id` = 13 AND `stock` < '1' )
+        //取到数据,说明购物车数量大于库存,不让买,并且给出提示
+        if($goodses){
+            foreach($goodses as $goods){
+                $error.=$goods['name'].'  ';
+            }
+            $this->error=$error.'库存不足';
+            return false;
+        }
+        //5.1保存订单之后,减去Goods表中的库存
+        foreach($shopping_car_info['goods_info'] as $goods_id=>$goods){
+           if($goods_model->where(['id'=>$goods_id])->setDec('stock',$goods['amount'])===false){
+               $this->error='更新库存失败';
+               $this->rollback();
+               return false;
+           }
+        }
         //1.5保存订单
         if(($order_id=$this->add())===false){
             $this->error='订单信息保存失败';
@@ -71,9 +112,17 @@ class OrderInfoModel extends Model
         $this->commit();
         return true;
     }
+
+    /**
+     * 保存发票
+     * @param $address_info
+     * @param $shopping_car_info
+     * @param $order_id
+     * @return mixed
+     */
     protected function _save_invoice($address_info,$shopping_car_info,$order_id){
         //3.1获取发票抬头
-        $receipt_type=I('post.type');
+        $receipt_type=I('post.receipt_type');
         //个人,获取用户姓名
         if($receipt_type==1){
             $receipt_title=$address_info['name'];
@@ -144,11 +193,151 @@ class OrderInfoModel extends Model
                 'goods_name'=>$goods['name'],
                 'logo'=>$goods['logo'],
                 'total_price'=>$goods['stotal_price'],
+                'price'=>$goods['shop_price'],
                 'amount'=>$goods['amount']
             ];
         }
         //2.2添加数据到订单详细表
         $order_info_model=M('OrderInfoItem');
         return $order_info_model->addAll($data);
+    }
+
+    /**
+     * 获取订单数据
+     * @return mixed
+     */
+    public function getList()
+    {
+        //获取订单基本信息
+        $userinfo=login();
+        $rows=$this->where(['member_id'=>$userinfo['id']])->select();
+        //获取订单详情,logo和商品名称
+        $order_info_item_model=M('OrderInfoItem');
+        foreach($rows as $key=>$row){
+            $rows[$key]['goods_info']=$order_info_item_model->field('goods_id,logo,goods_name')->where(['order_info_id'=>$row['id']])->select();
+        }
+        return $rows;
+    }
+
+    /**
+     * 通过订单id号,获取数据
+     * @param $id
+     * @return array
+     */
+    public function getListById($id)
+    {
+        return $this->find($id);
+    }
+
+    /**
+     * 清除超时订单
+     * @return bool
+     */
+    public function clearCarOutTime()
+    {
+        $this->startTrans();
+        $cond=[
+            'inputtime'=>[
+              'lt',NOW_TIME-900
+          ],
+            'status'=>1
+        ];
+        //如果没有过期的订单,则什么也不做
+        $outtime_car_id=$this->where($cond)->getField('id',true);
+        if(!$outtime_car_id){
+          return true;
+        }
+        //1.删除订单相关
+        //1.1有,则删除订单
+        if($this->where($cond)->setField(['status'=>0])===false){
+            $this->error='改变超时订单状态失败';
+            $this->rollback();
+            return false;
+        }
+        //先从订单详情中获取商品id和对应的数量
+        $goods_ids=M('OrderInfoItem')->where(['order_info_id'=>['in',$outtime_car_id]])->getField('id,goods_id,amount');
+//        //1.2删除订单详情
+//        if(M('OrderInfoItem')->where(['order_info_id'=>['in',$outtime_car_id]])->delete()===false){
+//            $this->error='删除超时订单详情失败';
+//            $this->rollback();
+//            return false;
+//        }
+//        //1.3删除发票
+//        if(M('Invoice')->where(['order_info_id'=>['in',$outtime_car_id]])->delete()===false){
+//            $this->error='删除超时订单发票失败';
+//            $this->rollback();
+//            return false;
+//        }
+        //2.查找出商品数量,返还给商品库存
+        $data=[];
+        foreach($goods_ids as $goods){
+            if(isset( $data[$goods['goods_id']])){
+                $data[$goods['goods_id']]+=$goods['amount'];
+            }else{
+                $data[$goods['goods_id']]=$goods['amount'];
+            }
+        }
+        foreach($data as $goods_id=>$amount){
+            if(M('Goods')->where(['id'=>$goods_id])->setInc('stock',$amount)===false){
+                $this->error='恢复商品库存失败';
+                $this->rollback();
+                return false;
+            }
+        }
+        $this->commit();
+        return true;
+
+    }
+
+    /**
+     * 用户删除订单
+     * @param $id
+     * @return bool
+     */
+    public function removeCar($id)
+    {
+        $this->startTrans();
+        $cond=[
+            'id'=>$id,
+            'status'=>1
+        ];
+        //1.1有,则删除订单
+        if($this->where($cond)->setField(['status'=>0])===false){
+            $this->error='改变超时订单状态失败';
+            $this->rollback();
+            return false;
+        }
+        //先从订单详情中获取商品id和对应的数量
+        $goods_ids=M('OrderInfoItem')->where(['order_info_id'=>$id])->getField('id,goods_id,amount');
+//        //1.2删除订单详情
+//        if(M('OrderInfoItem')->where(['order_info_id'=>['in',$outtime_car_id]])->delete()===false){
+//            $this->error='删除超时订单详情失败';
+//            $this->rollback();
+//            return false;
+//        }
+//        //1.3删除发票
+//        if(M('Invoice')->where(['order_info_id'=>['in',$outtime_car_id]])->delete()===false){
+//            $this->error='删除超时订单发票失败';
+//            $this->rollback();
+//            return false;
+//        }
+        //2.查找出商品数量,返还给商品库存
+        $data=[];
+        foreach($goods_ids as $goods){
+            if(isset( $data[$goods['goods_id']])){
+                $data[$goods['goods_id']]+=$goods['amount'];
+            }else{
+                $data[$goods['goods_id']]=$goods['amount'];
+            }
+        }
+        foreach($data as $goods_id=>$amount){
+            if(M('Goods')->where(['id'=>$goods_id])->setInc('stock',$amount)===false){
+                $this->error='恢复商品库存失败';
+                $this->rollback();
+                return false;
+            }
+        }
+        $this->commit();
+        return true;
     }
 }

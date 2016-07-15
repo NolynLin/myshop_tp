@@ -141,9 +141,9 @@ class ShoppingCarModel extends Model
         $total_price=0.00;
         $total_amount=0;
         //只有当登陆了才去获取积分,计算打折后的价格
-        if($userinfo){
+//        $score=M('Member')->where('id=null')->getField('score');
         //获取用户积分
-        $score=M('Member')->where('id='.$userinfo['id'])->getField('score');
+        $score=M('Member')->where(['id'=>$userinfo['id']])->getField('score');
         //获取用户级别
         $cond=[
           'bottom'=>['elt',$score],
@@ -158,26 +158,18 @@ class ShoppingCarModel extends Model
             //查看会员价
             $member_price=$member_price_model->where(['goods_id'=>$goods_id,'member_level_id'=>$level['id']])->getField('price');
             //如果当前商品存在特殊的会员价,以数据库为准,没有则按照会员等级自动计算
-            if($member_price){
+            if($userinfo && $member_price){
                 $goods_info[$goods_id]['shop_price']=locate_number_format($member_price);
-            }else{
+            }elseif($userinfo){
                 $goods_info[$goods_id]['shop_price']=locate_number_format($level['discount']*$goods_info[$goods_id]['shop_price']/100);
+            }else{
+                $goods_info[$goods_id]['shop_price']=locate_number_format( $goods_info[$goods_id]['shop_price']);
             }
             $goods_info[$goods_id]['amount']=$amount;
             //添加小计字段并转成100.00这种格式
             $goods_info[$goods_id]['stotal_price']=locate_number_format($goods_info[$goods_id]['shop_price'] * $amount);
             $total_price+=$goods_info[$goods_id]['stotal_price'];
             $total_amount+=$amount;
-        }
-        }else {
-            foreach ($shoop_car_info as $goods_id => $amount) {
-                $goods_info[$goods_id]['shop_price'] = locate_number_format($goods_info[$goods_id]['shop_price']);
-                $goods_info[$goods_id]['amount'] = $amount;
-                //添加小计字段并转成100.00这种格式
-                $goods_info[$goods_id]['stotal_price'] = locate_number_format($goods_info[$goods_id]['shop_price'] * $amount);
-                $total_price += $goods_info[$goods_id]['stotal_price'];
-                $total_amount += $amount;
-            }
         }
         $total_price=locate_number_format($total_price);
         return compact('total_amount','goods_info','total_price');
